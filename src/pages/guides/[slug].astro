@@ -30,7 +30,7 @@ const pageUrl = `${siteConfig.url}/guides/${guide.slug}/`;
 
 const recommendedBrands = brands.filter((b) => guide.recommendedBrandIds.includes(b.id));
 
-const jsonLd = graph([
+const jsonLdNodes: Record<string, unknown>[] = [
   personSchema(siteConfig),
   breadcrumbSchema([
     { name: '首页', url: `${siteConfig.url}/` },
@@ -42,7 +42,7 @@ const jsonLd = graph([
     headline: guide.title,
     description: guide.summary,
     datePublished: guide.publishDate,
-    dateModified: guide.publishDate,
+    dateModified: guide.updateDate || guide.publishDate,
     author: {
       '@type': 'Person',
       name: '梯子Blog 网络评测实验室',
@@ -62,7 +62,23 @@ const jsonLd = graph([
       '@id': pageUrl,
     },
   },
-]);
+];
+
+if (guide.faqs && guide.faqs.length > 0) {
+  jsonLdNodes.push({
+    '@type': 'FAQPage',
+    mainEntity: guide.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer.replace(/<[^>]+>/g, ''),
+      },
+    })),
+  });
+}
+
+const jsonLd = graph(jsonLdNodes);
 ---
 
 <BaseLayout
@@ -84,8 +100,9 @@ const jsonLd = graph([
         <div class="header-inner rev">
           <div class="guide-badge-row">
             <span class="badge-cat">{guide.category}</span>
+            <span class="badge-role">{guide.pageRole.split('(')[0]}</span>
             <span class="badge-time">{guide.readTime}</span>
-            <span class="badge-date">{guide.publishDate}</span>
+            <span class="badge-date">更新于: {guide.updateDate || guide.publishDate}</span>
           </div>
 
           <h1 class="d2 guide-h1">{guide.title}</h1>
@@ -103,6 +120,22 @@ const jsonLd = graph([
             <div class="toc-box">
               <h3 class="toc-title">目录导航</h3>
               <ul class="toc-list">
+                <li>
+                  <a href="#takeaways">核心结论速览</a>
+                </li>
+                <li>
+                  <a href="#answer-block">AEO 实体回答</a>
+                </li>
+                {guide.flowchart && (
+                  <li>
+                    <a href="#flowchart">选型决策流程</a>
+                  </li>
+                )}
+                {guide.comparisonTable && (
+                  <li>
+                    <a href="#comparison-table">核心参数对照</a>
+                  </li>
+                )}
                 {
                   guide.content.map((sec, idx) => (
                     <li>
@@ -110,8 +143,21 @@ const jsonLd = graph([
                     </li>
                   ))
                 }
+                {guide.troubleshootingCases && (
+                  <li>
+                    <a href="#troubleshooting">排障案例实战</a>
+                  </li>
+                )}
+                {guide.faqs && guide.faqs.length > 0 && (
+                  <li>
+                    <a href="#faqs">常见问题答疑 (FAQ)</a>
+                  </li>
+                )}
                 <li>
-                  <a href="#recommended-brands">本篇推荐严选专线</a>
+                  <a href="#recommended-brands">严选落地专线</a>
+                </li>
+                <li>
+                  <a href="#topic-matrix">站内矩阵与延伸</a>
                 </li>
               </ul>
             </div>
@@ -121,8 +167,8 @@ const jsonLd = graph([
                 <img src="/images/hero-portrait.webp" alt="梯子Blog 评测实验室" />
               </div>
               <div class="author-info">
-                <strong>梯子Blog 评测组</strong>
-                <span>坚持真实可观测实测数据</span>
+                <strong>梯子Blog 评测实验室</strong>
+                <span>坚持真实可观测网络实测</span>
               </div>
             </div>
           </div>
@@ -131,7 +177,7 @@ const jsonLd = graph([
         <!-- Main Body Content -->
         <div class="article-main">
           <!-- Key Takeaways Callout -->
-          <div class="takeaways-callout rev">
+          <div class="takeaways-callout rev" id="takeaways">
             <div class="tc-head">
               <Icon name="spark" class="ic-xs tc-icon" />
               <strong>核心要点速览（Key Takeaways）</strong>
@@ -147,6 +193,74 @@ const jsonLd = graph([
               }
             </ul>
           </div>
+
+          <!-- Answer Block for AEO / GEO -->
+          {guide.answerBlock && (
+            <div class="answer-block rev" id="answer-block">
+              <div class="ab-head">
+                <span class="ab-pill">GEO / AEO 实体答案块</span>
+                <span class="ab-meta">AI 引用与决策核心摘要</span>
+              </div>
+              <h3 class="ab-question">{guide.answerBlock.question}</h3>
+              <p class="ab-answer">{guide.answerBlock.answer}</p>
+              <div class="ab-foot">
+                <span>* 本答案由评测实验室依据真机晚高峰压测与协议底层 RFC 验证归纳，适于作为 AI 搜索引擎引证。</span>
+              </div>
+            </div>
+          )}
+
+          <!-- Flowchart / Decision Tree -->
+          {guide.flowchart && (
+            <div class="flowchart-box rev" id="flowchart">
+              <div class="fc-head">
+                <Icon name="spark" class="ic-xs" />
+                <h3>{guide.flowchart.title}</h3>
+              </div>
+              <div class="fc-steps">
+                {guide.flowchart.steps.map((st, sIdx) => (
+                  <div class="fc-step-item">
+                    <div class="fc-step-num">{sIdx + 1}</div>
+                    <div class="fc-step-body">
+                      <div class="fc-step-line">
+                        <strong>{st.step}</strong>
+                        {st.tag && <span class="fc-step-tag">{st.tag}</span>}
+                      </div>
+                      <p set:html={st.desc} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Comparison Table -->
+          {guide.comparisonTable && (
+            <div class="comparison-table-wrap rev" id="comparison-table">
+              <div class="table-caption">
+                <strong>{guide.comparisonTable.caption}</strong>
+              </div>
+              <div class="table-responsive">
+                <table class="guide-table">
+                  <thead>
+                    <tr>
+                      {guide.comparisonTable.headers.map((h) => (
+                        <th>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {guide.comparisonTable.rows.map((row) => (
+                      <tr>
+                        {row.map((cell, cIdx) => (
+                          <td class={cIdx === 0 ? 'td-primary' : ''} set:html={cell} />
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           <!-- Content Sections -->
           <div class="article-prose rev rev-d1">
@@ -171,11 +285,75 @@ const jsonLd = graph([
             }
           </div>
 
+          <!-- Practical Code / Command Snippet -->
+          {guide.codeSnippet && (
+            <div class="code-snippet-box rev" id="code-snippet">
+              <div class="csb-head">
+                <span class="csb-title">💻 {guide.codeSnippet.title}</span>
+                <span class="csb-lang">{guide.codeSnippet.language}</span>
+              </div>
+              <pre class="csb-code"><code>{guide.codeSnippet.code}</code></pre>
+              {guide.codeSnippet.note && <p class="csb-note">* {guide.codeSnippet.note}</p>}
+            </div>
+          )}
+
+          <!-- Troubleshooting Cases -->
+          {guide.troubleshootingCases && guide.troubleshootingCases.length > 0 && (
+            <div class="troubleshoot-box rev" id="troubleshooting">
+              <h3 class="tb-head">🛠️ 真实排障案例实战与排查命令</h3>
+              <div class="tb-list">
+                {guide.troubleshootingCases.map((tc) => (
+                  <div class="tb-card">
+                    <div class="tb-item">
+                      <span class="tb-badge danger">故障表现</span>
+                      <p>{tc.symptom}</p>
+                    </div>
+                    <div class="tb-item">
+                      <span class="tb-badge warn">底层病因</span>
+                      <p>{tc.rootCause}</p>
+                    </div>
+                    <div class="tb-item">
+                      <span class="tb-badge success">解决方案</span>
+                      <p set:html={tc.solution} />
+                    </div>
+                    {tc.verifyCommand && (
+                      <div class="tb-cmd">
+                        <span class="cmd-label">排查验证命令：</span>
+                        <code>{tc.verifyCommand}</code>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- FAQs Section -->
+          {guide.faqs && guide.faqs.length > 0 && (
+            <section class="guide-faq-sec rev" id="faqs">
+              <h2 class="d3">❓ 常见问题深度答疑 (FAQ)</h2>
+              <p class="section-sub">覆盖用户选型、协议机制与日常使用中最常见的高频长尾疑难：</p>
+              <div class="faq-cards">
+                {guide.faqs.map((faq, fIdx) => (
+                  <details class="faq-item" open={fIdx === 0}>
+                    <summary class="faq-summary">
+                      <span class="faq-q">{faq.question}</span>
+                      <Icon name="plus" class="ic-xs" />
+                    </summary>
+                    <div class="faq-body">
+                      <p set:html={faq.answer} />
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
           <!-- Recommended Brands Showcase -->
           <section class="recom-section rev rev-d2" id="recommended-brands">
             <div class="recom-head">
               <p class="eyebrow">Top Picks for This Guide</p>
-              <h2 class="d3">基于本篇策略推荐的严选专线</h2>
+              <h2 class="d3">基于本篇策略推荐的严选落地专线</h2>
               <p class="recom-intro">
                 以下品牌均经过真机晚高峰测速与解锁状态核验，符合本篇攻略的选型标准：
               </p>
@@ -221,6 +399,40 @@ const jsonLd = graph([
             </div>
           </section>
 
+          <!-- Topic Cluster & Internal Links Network -->
+          <nav class="topic-cluster-nav rev" id="topic-matrix" aria-label="站内内容矩阵与内部链接">
+            <div class="tcn-head">
+              <Icon name="spark" class="ic-xs" />
+              <h3>站内四层链接矩阵与延伸阅读</h3>
+            </div>
+            <div class="tcn-grid">
+              <div class="tcn-col">
+                <span class="tcn-tag">第一层：向上所属支柱</span>
+                <ul>
+                  {guide.internalLinkPlan.parent.map((p) => (
+                    <li><a href={p.url}>{p.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+              <div class="tcn-col">
+                <span class="tcn-tag">第二层：横向兄弟关联</span>
+                <ul>
+                  {guide.internalLinkPlan.siblings.map((s) => (
+                    <li><a href={s.url}>{s.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+              <div class="tcn-col">
+                <span class="tcn-tag">第三层：向下真机实测</span>
+                <ul>
+                  {guide.internalLinkPlan.children.map((c) => (
+                    <li><a href={c.url}>{c.title}</a></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </nav>
+
           <!-- Prev / Next Pagination -->
           <nav class="guide-nav-bar rev" aria-label="相邻攻略切换">
             <a href={`/guides/${prev.slug}/`} class="nav-prev">
@@ -264,6 +476,14 @@ const jsonLd = graph([
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
     font-weight: 600;
+  }
+  .badge-role {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--c-text-muted, #b2b8b3);
+    border: 1px solid var(--c-border, #242524);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
   }
   .guide-h1 {
     margin: 0 0 1rem;
@@ -374,7 +594,7 @@ const jsonLd = graph([
     border: 1.5px solid rgba(200, 241, 77, 0.25);
     border-radius: 12px;
     padding: 1.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
   .tc-head {
     display: flex;
@@ -407,13 +627,187 @@ const jsonLd = graph([
   }
   .takeaways-callout li :global(.ic),
   .takeaways-callout li :global(svg) {
-    width: 14px !important;
-    height: 14px !important;
-    min-width: 14px !important;
-    max-width: 14px !important;
+    width: 13px !important;
+    height: 13px !important;
+    min-width: 13px !important;
+    max-width: 13px !important;
     color: var(--c-lime, #c8f14d);
     flex-shrink: 0 !important;
     margin-top: 5px;
+  }
+
+  /* Answer Block */
+  .answer-block {
+    background: linear-gradient(135deg, rgba(200, 241, 77, 0.12) 0%, rgba(26, 29, 26, 0.9) 100%);
+    border: 1.5px solid var(--c-lime, #c8f14d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  .ab-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+  .ab-pill {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .ab-meta {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .ab-question {
+    font-size: 1.15rem;
+    color: #ffffff;
+    margin: 0 0 0.85rem;
+    line-height: 1.4;
+  }
+  .ab-answer {
+    color: var(--c-text, #e8ece9);
+    font-size: 0.98rem;
+    line-height: 1.8;
+    margin: 0 0 0.85rem;
+  }
+  .ab-foot {
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+    padding-top: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+
+  /* Flowchart Box */
+  .flowchart-box {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .fc-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .fc-head h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .fc-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .fc-step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  .fc-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid var(--c-lime, #c8f14d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .fc-step-body {
+    flex: 1;
+  }
+  .fc-step-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .fc-step-line strong {
+    color: var(--c-text, #e8ece9);
+    font-size: 0.95rem;
+  }
+  .fc-step-tag {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-lime, #c8f14d);
+    border-radius: 4px;
+  }
+  .fc-step-body p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+
+  /* Comparison Table */
+  .comparison-table-wrap {
+    margin: 2.5rem 0;
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .table-caption {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--c-border, #242524);
+    font-size: 0.95rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    text-align: left;
+  }
+  .guide-table th {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.85rem 1rem;
+    color: var(--c-text, #e8ece9);
+    font-weight: 600;
+    border-bottom: 1px solid var(--c-border, #242524);
+    white-space: nowrap;
+  }
+  .guide-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.5;
+  }
+  .guide-table tr:last-child td {
+    border-bottom: none;
+  }
+  .guide-table tr:hover td {
+    background: rgba(200, 241, 77, 0.03);
+  }
+  .guide-table .td-primary {
+    font-weight: 600;
+    color: var(--c-text, #e8ece9);
+  }
+  .guide-table a {
+    color: var(--c-lime, #c8f14d);
+    text-decoration: underline;
   }
 
   /* Article Prose */
@@ -439,6 +833,11 @@ const jsonLd = graph([
   .prose-sec :global(strong) {
     color: var(--c-lime, #c8f14d);
   }
+  .prose-sec :global(a) {
+    color: var(--c-lime, #c8f14d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
   .subsections {
     display: flex;
     flex-direction: column;
@@ -461,13 +860,187 @@ const jsonLd = graph([
     font-size: 0.95rem;
   }
 
+  /* Code Snippet Box */
+  .code-snippet-box {
+    background: #0d0e0d;
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    margin: 2.5rem 0;
+    overflow: hidden;
+  }
+  .csb-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--c-border, #242524);
+  }
+  .csb-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--c-text, #e8ece9);
+  }
+  .csb-lang {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+  .csb-code {
+    margin: 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: #8edc6e;
+    line-height: 1.6;
+    background: transparent;
+  }
+  .csb-note {
+    margin: 0;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    font-size: 0.8rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+
+  /* Troubleshooting Box */
+  .troubleshoot-box {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2.5rem 0;
+  }
+  .tb-head {
+    margin: 0 0 1.25rem;
+    font-size: 1.15rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .tb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .tb-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .tb-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .tb-item p {
+    margin: 0;
+    color: var(--c-text, #e8ece9);
+  }
+  .tb-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .tb-badge.danger {
+    background: rgba(255, 75, 75, 0.15);
+    color: #ff6b6b;
+  }
+  .tb-badge.warn {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+  }
+  .tb-badge.success {
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+  }
+  .tb-cmd {
+    background: #0d0e0d;
+    padding: 0.6rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .cmd-label {
+    color: var(--c-text-dim, #8b928c);
+  }
+  .tb-cmd code {
+    color: var(--c-lime, #c8f14d);
+    font-family: monospace;
+  }
+
+  /* FAQs Section */
+  .guide-faq-sec {
+    margin: 3.5rem 0;
+    scroll-margin-top: 6rem;
+  }
+  .guide-faq-sec h2 {
+    margin: 0 0 0.5rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .section-sub {
+    margin: 0 0 1.5rem;
+    color: var(--c-text-muted, #b2b8b3);
+    font-size: 0.95rem;
+  }
+  .faq-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .faq-item {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .faq-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-text, #e8ece9);
+  }
+  .faq-summary:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .faq-body {
+    padding: 0 1.25rem 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--c-text-muted, #b2b8b3);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .faq-body p {
+    margin: 0.85rem 0 0;
+  }
+
   /* Recommended Brands Section */
   .recom-section {
     background: var(--c-surface, #151615);
     border: 1px solid var(--c-border, #242524);
     border-radius: 16px;
     padding: 2.5rem;
-    margin: 4rem 0 3rem;
+    margin: 3.5rem 0;
     scroll-margin-top: 6rem;
   }
   @media (max-width: 600px) {
@@ -586,6 +1159,63 @@ const jsonLd = graph([
   }
   .rc-actions .btn-lime:hover {
     background: #d8f56e !important;
+  }
+
+  /* Topic Cluster Navigation Panel */
+  .topic-cluster-nav {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin: 3.5rem 0 2.5rem;
+  }
+  .tcn-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .tcn-head h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .tcn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+  .tcn-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .tcn-tag {
+    font-size: 0.75rem;
+    color: var(--c-lime, #c8f14d);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tcn-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .tcn-col a {
+    font-size: 0.85rem;
+    color: var(--c-text-muted, #b2b8b3);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+  .tcn-col a:hover {
+    color: var(--c-lime, #c8f14d);
+    text-decoration: underline;
   }
 
   /* Guide Nav Bar */
