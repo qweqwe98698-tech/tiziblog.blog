@@ -35,7 +35,8 @@ const {
   jsonLd,
 } = Astro.props;
 
-const fullTitle = appendSiteName ? `${title} — ${siteConfig.name}` : title;
+const shouldAppend = appendSiteName && !title.includes(siteConfig.name);
+const fullTitle = shouldAppend ? `${title} — ${siteConfig.name}` : title;
 const href = canonical ?? canonicalUrl(Astro.url, Astro.site);
 const ogImage = image.startsWith('http') ? image : absoluteUrl(image, Astro.site);
 ---

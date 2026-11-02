@@ -28,6 +28,7 @@ interface Props {
 const { brand, prev, next } = Astro.props;
 const pageUrl = `${siteConfig.url}/brands/${brand.id}/`;
 const isGuangsu = brand.id === 'guangsu';
+const ratingValue = isGuangsu ? '4.88' : (brand.rank <= 3 ? '4.9' : brand.rank <= 10 ? '4.7' : '4.4');
 
 const pageTitle = isGuangsu
   ? guangsuReviewDossier.seoTitle
@@ -67,7 +68,7 @@ const jsonLd = graph([
       '@type': 'Review',
       reviewRating: {
         '@type': 'Rating',
-        ratingValue: isGuangsu ? '4.88' : (brand.rank <= 3 ? '4.9' : brand.rank <= 10 ? '4.7' : '4.4'),
+        ratingValue: ratingValue,
         bestRating: '5',
       },
       author: { '@type': 'Person', name: '梯子Blog 评测实验室' },
@@ -138,6 +139,7 @@ const jsonLd = graph([
           <div class="brand-title-line">
             <span class="rank-tag">#{brand.rank}</span>
             <h1 class="d1 brand-h1">{brand.name}</h1>
+            <span class="pill-score">⭐ 综合评分 {ratingValue} / 5.0</span>
             {brand.isMainPromo && <span class="pill-main">本站第一主推</span>}
             {brand.hasCustomClient && <span class="pill-app">配备自研客户端</span>}
             {isGuangsu && <span class="pill-monograph">1.3万字专著级深度实测</span>}
@@ -177,6 +179,10 @@ const jsonLd = graph([
 
         <!-- Tech Spec Badges -->
         <div class="spec-badges">
+          <div class="spec-pill spec-rating">
+            <span class="lbl">实验室评级</span>
+            <strong class="rating-val">⭐ {ratingValue} <small>/ 5.0</small></strong>
+          </div>
           <div class="spec-pill">
             <span class="lbl">线路架构</span>
             <strong>{brand.lineType.join(' + ')}</strong>
@@ -619,6 +625,26 @@ const jsonLd = graph([
     border-radius: var(--r-pill);
     font-size: 13px;
     font-weight: 700;
+  }
+
+  .pill-score {
+    background: rgba(255, 184, 0, 0.15);
+    color: #925400;
+    border: 1px solid rgba(255, 184, 0, 0.4);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .spec-pill.spec-rating {
+    border-color: rgba(255, 184, 0, 0.5);
+    background: #fffcf0;
+  }
+
+  .rating-val {
+    color: #d46b08;
+    font-size: 15px;
   }
 
   .pill-app {
