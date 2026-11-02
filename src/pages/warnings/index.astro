@@ -1,0 +1,1177 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import Icon from '~/components/Icon.astro';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+import { warningsRadarDossier } from '~/data/warningsRadar';
+
+const pageUrl = `${siteConfig.url}/warnings/`;
+
+// Extract all FAQs from chapter 7 for FAQPage schema
+const faqChapter = warningsRadarDossier.chapters.find((c) => c.faqs && c.faqs.length > 0);
+const allFaqs = faqChapter ? faqChapter.faqs! : [];
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '跑路预警与防坑雷达', url: pageUrl },
+  ]),
+  {
+    '@type': 'Article',
+    headline: warningsRadarDossier.meta.h1,
+    description: warningsRadarDossier.meta.description,
+    url: pageUrl,
+    inLanguage: 'zh-CN',
+    author: { '@type': 'Person', name: warningsRadarDossier.meta.author },
+    datePublished: '2026-10-15',
+    dateModified: warningsRadarDossier.meta.updateDate,
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: allFaqs.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  },
+]);
+---
+
+<BaseLayout
+  title={warningsRadarDossier.meta.title}
+  description={warningsRadarDossier.meta.description}
+  jsonLd={jsonLd}
+  appendSiteName={false}
+>
+  <article class="warnings-page">
+    <!-- Hero Header -->
+    <header class="wrap phero">
+      <div class="phero-in rev">
+        <Breadcrumbs
+          items={[
+            { label: '首页', href: '/' },
+            { label: '翻墙机场跑路预警与防坑观测雷达' },
+          ]}
+        />
+
+        <div class="warnings-hero-head">
+          <div class="warnings-title-line">
+            <span class="pill-badge red">风险防务</span>
+            <h1 class="d1 warnings-h1">翻墙机场跑路预警与防坑观测雷达</h1>
+            <span class="pill-tag">万字专著级风险审计</span>
+            <span class="pill-tag-alt">2026年第4季度核验</span>
+          </div>
+
+          <div class="warnings-hero-actions">
+            <a href="#chapter-2" class="btn btn-outline btn-md">
+              <span>🚨 跑路前六大异常征兆</span>
+            </a>
+            <a href="#chapter-4" class="btn btn-outline btn-md">
+              <span>💳 遭遇跑路挽损申诉</span>
+            </a>
+            <a href="/brands/guangsu/" class="btn btn-lime btn-md">
+              <span>🏆 查阅防跑路标杆：光速云</span>
+              <Icon name="arrow" class="ic-xs" />
+            </a>
+          </div>
+        </div>
+
+        <p class="warnings-lead-desc">
+          基于全网 42 家机场商业运行模型与长达数年的网络观测，深度解密翻墙机场跑路底层的<strong>刚性物理带宽成本与庞氏现金流挤兑数学机制</strong>。全面盘点跑路前<strong>六大危险异常先兆</strong>、提供历史典型跑路机场<strong>尸检解剖档案库</strong>，并附赠遭遇跑路后的<strong>支付宝/微信支付追索、信用卡 180 天 Chargeback 拒付申诉模板</strong>与个人凭证隔离防撞库全套指引。
+        </p>
+
+        <!-- AEO Direct Answer Snippet Box -->
+        <div class="aeo-answer-box rev rev-d1">
+          <div class="aeb-badge">
+            <Icon name="spark" class="ic-xs" />
+            <span>GEO / AEO 权威核心判定结论</span>
+          </div>
+          <h2 class="aeb-question">{warningsRadarDossier.coreAnswer.question}</h2>
+          <p class="aeb-answer">{warningsRadarDossier.coreAnswer.shortAnswer}</p>
+        </div>
+
+        <!-- Tech Spec Badges -->
+        <div class="spec-badges">
+          <div class="spec-pill">
+            <span class="lbl">预警范围</span>
+            <strong>全网商业机场资金链与线路异常</strong>
+          </div>
+          <div class="spec-pill">
+            <span class="lbl">观测机制</span>
+            <strong>六维健康度雷达 + 晚高峰真机丢包监测</strong>
+          </div>
+          <div class="spec-pill">
+            <span class="lbl">挽损支持</span>
+            <strong>支付宝 / 微信 / 信用卡 Chargeback 拒付模板</strong>
+          </div>
+          <div class="spec-pill">
+            <span class="lbl">更新周期</span>
+            <strong>2026年11月动态更新</strong>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap sec" style="padding-top:0">
+      <div class="brand-content-grid">
+        <!-- Main Column -->
+        <div class="brand-main-col">
+          <div class="monograph-container">
+            {warningsRadarDossier.chapters.map((chapter) => (
+              <section class="card-section rev monograph-section" id={chapter.anchor}>
+                <div class="section-title-wrap">
+                  <h2 class="d3 mono-chapter-title">{chapter.title}</h2>
+                  {chapter.badge && <span class="badge-measured">{chapter.badge}</span>}
+                </div>
+                <p class="section-sub mono-summary">{chapter.summary}</p>
+
+                {chapter.contentHtml && (
+                  <div class="mono-content-body" set:html={chapter.contentHtml} />
+                )}
+
+                {/* Chapter 7 FAQs Accordion */}
+                {chapter.faqs && chapter.faqs.length > 0 && (
+                  <div class="faqs-accordion-wrap">
+                    <p class="faq-sub-lead">
+                      以下 10 组高频问答汇集了大量受害者真实遭遇与资深网络工程师维权经验，建议详细通读：
+                    </p>
+                    <div class="faq-accordion-list">
+                      {chapter.faqs.map((faq, fIdx) => (
+                        <details class="faq-details-item" open={fIdx === 0}>
+                          <summary class="faq-details-summary">
+                            <span class="fds-num">Q{fIdx + 1}</span>
+                            <span class="fds-title">{faq.q}</span>
+                            <span class="fds-icon">+</span>
+                          </summary>
+                          <div class="faq-details-content">
+                            <p>{faq.a}</p>
+                          </div>
+                        </details>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </section>
+            ))}
+          </div>
+        </div>
+
+        <!-- Sidebar Sticky Column -->
+        <aside class="brand-sidebar-col rev rev-d2">
+          <!-- Table of Contents -->
+          <div class="sidebar-card nav-card sticky-toc-card">
+            <h4 class="nav-title">📖 本专著全书目录</h4>
+            <ul class="quick-nav-list monograph-toc">
+              {warningsRadarDossier.chapters.map((ch, idx) => (
+                <li>
+                  <a href={`#${ch.anchor}`} class="toc-link">
+                    <span class="toc-num">{idx + 1}.</span>
+                    <span class="toc-txt">{ch.navTitle}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Safe Baseline Conversion Card -->
+          <div class="sidebar-card promo-card">
+            <h3 class="sc-title">🏆 拒绝跑路内耗：选择 5 年稳健老牌</h3>
+            <p class="sc-desc">
+              厌倦了廉价机场无休止的断网与跑路恐慌？首选本站第一基石 <strong>光速云</strong>：自 2020 年上线运营超 5 年，全系真实 IEPL 专线，全平台自研一键登录客户端，支持小额月付与 147 元 247GB 永久不限时包。
+            </p>
+            <div class="sc-btn-wrap">
+              <a href="/brands/guangsu/" class="btn btn-lime btn-full">
+                <span>查阅光速云万字评测报告</span>
+                <Icon name="arrow" class="ic-xs" />
+              </a>
+              <p class="sc-disclaimer">
+                * 结账输入优惠码 <code>AMM</code> 享折上立减优惠
+              </p>
+            </div>
+          </div>
+
+          <!-- Free Emergency Backup Bridge -->
+          <div class="sidebar-card free-bridge-card">
+            <h4 class="nav-title">🛠️ 紧急灾备：零成本恢复网络</h4>
+            <p class="fbc-desc">
+              主机场失联？利用本站 Cloudflare Workers 教程与 Proton 官方节点，5 分钟内零成本恢复 Google 查资与关键通讯。
+            </p>
+            <a href="/free/" class="btn btn-outline btn-full btn-sm">
+              <span>查阅免费应急节点矩阵 →</span>
+            </a>
+          </div>
+
+          <!-- Related Hub Guides Card -->
+          <div class="sidebar-card guides-nav-card">
+            <h4 class="nav-title">核心攻略与决策中心</h4>
+            <ul class="quick-nav-list">
+              <li><a href="/brands/">🌐 42 家机场品牌横评库</a></li>
+              <li><a href="/speedtest/">⚡ 全网千兆晚高峰测速榜</a></li>
+              <li><a href="/clients/">📱 多平台客户端配置中心</a></li>
+              <li><a href="/guides/decision-tree/">🎯 2026 选型决策树</a></li>
+              <li><a href="/guides/airport-anti-scam/">🛡️ 新手避坑防跑路法则</a></li>
+              <li><a href="/faq/">❓ 60 组全科技术 FAQ 知识库</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .warnings-hero-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 16px 0 20px;
+  }
+
+  .warnings-title-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pill-badge {
+    background: #0b6cb2;
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pill-badge.red {
+    background: #d32f2f;
+  }
+
+  .pill-tag {
+    background: var(--theme-accent);
+    color: var(--theme-ink);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pill-tag-alt {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--theme-faint);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+  }
+
+  .warnings-h1 {
+    margin: 0;
+    font-size: clamp(26px, 3.2vw, 42px);
+    line-height: 1.15;
+    color: var(--theme-ink);
+  }
+
+  .warnings-hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .warnings-lead-desc {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--theme-slate);
+    max-width: 980px;
+    margin: 0 0 24px;
+  }
+
+  .warnings-lead-desc strong {
+    color: var(--theme-ink);
+  }
+
+  /* AEO Direct Answer Box */
+  .aeo-answer-box {
+    background: linear-gradient(135deg, rgba(200, 241, 77, 0.08) 0%, rgba(16, 17, 16, 0.03) 100%);
+    border: 1.5px solid var(--theme-accent);
+    border-radius: var(--r-md);
+    padding: 22px 26px;
+    margin: 20px 0 28px;
+  }
+
+  .aeb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--theme-accent);
+    color: var(--theme-ink);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    margin-bottom: 12px;
+  }
+
+  .aeb-question {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--theme-ink);
+    margin: 0 0 10px;
+    line-height: 1.4;
+  }
+
+  .aeb-answer {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--theme-graphite);
+    margin: 0;
+  }
+
+  /* Spec Badges */
+  .spec-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .spec-pill {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    padding: 12px 16px;
+    border-radius: var(--r-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .spec-pill .lbl {
+    font-size: 12px;
+    color: var(--theme-slate);
+  }
+
+  .spec-pill strong {
+    font-size: 13.5px;
+    color: var(--theme-ink);
+  }
+
+  /* Layout Columns */
+  .brand-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 32px;
+    margin-top: 36px;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .brand-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .brand-main-col {
+    min-width: 0;
+  }
+
+  .monograph-container {
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  .card-section {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-lg);
+    padding: 36px 38px;
+    box-shadow: 0 4px 24px rgba(16, 17, 16, 0.04);
+  }
+
+  @media (max-width: 640px) {
+    .card-section {
+      padding: 22px 18px;
+    }
+  }
+
+  .section-title-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 2px solid var(--theme-mist);
+    padding-bottom: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .mono-chapter-title {
+    margin: 0;
+    font-size: clamp(21px, 2.3vw, 28px);
+    color: var(--theme-ink);
+    line-height: 1.3;
+  }
+
+  .badge-measured {
+    background: rgba(200, 241, 77, 0.2);
+    color: #386400;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(200, 241, 77, 0.4);
+  }
+
+  .mono-summary {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--theme-slate);
+    margin: 0 0 24px;
+  }
+
+  /* Content Body Global Styles */
+  .mono-content-body {
+    font-size: 15.5px;
+    line-height: 1.85;
+    color: var(--theme-graphite);
+  }
+
+  .mono-content-body :global(h3) {
+    font-size: 20px;
+    color: var(--theme-ink);
+    margin: 32px 0 14px;
+    padding-left: 12px;
+    border-left: 4px solid var(--theme-accent);
+    line-height: 1.4;
+  }
+
+  .mono-content-body :global(h4) {
+    font-size: 17px;
+    color: var(--theme-ink);
+    margin: 20px 0 10px;
+  }
+
+  .mono-content-body :global(p) {
+    margin: 0 0 16px;
+  }
+
+  .mono-content-body :global(ul),
+  .mono-content-body :global(ol) {
+    margin: 0 0 20px;
+    padding-left: 24px;
+  }
+
+  .mono-content-body :global(ul) {
+    list-style: disc;
+  }
+
+  .mono-content-body :global(ol) {
+    list-style: decimal;
+  }
+
+  .mono-content-body :global(li) {
+    margin-bottom: 10px;
+    line-height: 1.75;
+  }
+
+  .mono-content-body :global(strong) {
+    color: var(--theme-ink);
+  }
+
+  .mono-content-body :global(code) {
+    background: var(--theme-mist);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #d32f2f;
+  }
+
+  /* Lead Quote Box */
+  .mono-content-body :global(.lead-quote-box) {
+    background: var(--theme-mist);
+    border-left: 4px solid var(--theme-ink);
+    padding: 18px 22px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 24px;
+  }
+
+  .mono-content-body :global(.lqb-tag) {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--theme-slate);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .mono-content-body :global(.lead-quote-box p) {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--theme-ink);
+  }
+
+  /* Cost Grid */
+  .mono-content-body :global(.cost-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0 28px;
+  }
+
+  .mono-content-body :global(.cost-card) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    padding: 20px;
+  }
+
+  .mono-content-body :global(.cost-card .cc-head) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .mono-content-body :global(.cost-card .cc-badge) {
+    align-self: flex-start;
+    background: rgba(16, 17, 16, 0.08);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--theme-slate);
+  }
+
+  .mono-content-body :global(.cost-card h4) {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .mono-content-body :global(.cost-card p) {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--theme-graphite);
+  }
+
+  /* Responsive Table */
+  .mono-content-body :global(.responsive-table-wrap) {
+    width: 100%;
+    overflow-x: auto;
+    margin: 24px 0 32px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--theme-line);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mono-content-body :global(.mono-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .mono-content-body :global(.mono-table th) {
+    background: var(--theme-mist);
+    color: var(--theme-ink);
+    padding: 14px 16px;
+    font-weight: 700;
+    border-bottom: 2px solid var(--theme-line);
+    white-space: nowrap;
+  }
+
+  .mono-content-body :global(.mono-table td) {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--theme-line);
+    line-height: 1.6;
+    vertical-align: top;
+  }
+
+  .mono-content-body :global(.mono-table tr:hover) {
+    background: rgba(200, 241, 77, 0.04);
+  }
+
+  .mono-content-body :global(.td-sub) {
+    font-size: 12px;
+    color: var(--theme-slate);
+  }
+
+  .mono-content-body :global(.color-ok) {
+    color: #2e7d32;
+  }
+
+  .mono-content-body :global(.color-warn) {
+    color: #ed6c02;
+  }
+
+  .mono-content-body :global(.color-danger) {
+    color: #d32f2f;
+  }
+
+  /* Warning Radar Cards */
+  .mono-content-body :global(.warning-radar-cards) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 24px 0;
+  }
+
+  .mono-content-body :global(.radar-card) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    border-left: 6px solid #d32f2f;
+  }
+
+  .mono-content-body :global(.radar-card.danger-level-4) {
+    border-left-color: #ed6c02;
+  }
+
+  .mono-content-body :global(.radar-card.danger-level-3) {
+    border-left-color: #0288d1;
+  }
+
+  .mono-content-body :global(.radar-card .rc-header) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .mono-content-body :global(.radar-card .rc-tag) {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    background: #d32f2f;
+    color: #fff;
+  }
+
+  .mono-content-body :global(.radar-card.danger-level-4 .rc-tag) {
+    background: #ed6c02;
+  }
+
+  .mono-content-body :global(.radar-card.danger-level-3 .rc-tag) {
+    background: #0288d1;
+  }
+
+  .mono-content-body :global(.radar-card h4) {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  /* Autopsy List */
+  .mono-content-body :global(.autopsy-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 24px 0;
+  }
+
+  .mono-content-body :global(.autopsy-item) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+  }
+
+  .mono-content-body :global(.autopsy-item .ai-header) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .mono-content-body :global(.autopsy-item .ai-case-num) {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--theme-ink);
+    color: var(--theme-accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .mono-content-body :global(.autopsy-item h4) {
+    margin: 0;
+    font-size: 17.5px;
+  }
+
+  .mono-content-body :global(.autopsy-item .ai-meta) {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--theme-slate);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+
+  .mono-content-body :global(.autopsy-item .ai-lesson) {
+    background: rgba(200, 241, 77, 0.15);
+    border-left: 4px solid var(--theme-accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 14.5px;
+    color: var(--theme-ink);
+    margin-top: 16px;
+  }
+
+  /* Checklist Box */
+  .mono-content-body :global(.checklist-box) {
+    background: #fff8f8;
+    border: 1.5px solid #ffcdd2;
+    border-radius: var(--r-md);
+    padding: 22px;
+    margin: 20px 0;
+  }
+
+  .mono-content-body :global(.checklist-box h4) {
+    color: #c62828;
+    margin: 0 0 14px;
+  }
+
+  /* Dispute Channels Grid */
+  .mono-content-body :global(.dispute-channels-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin: 20px 0;
+  }
+
+  .mono-content-body :global(.dc-card) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    padding: 20px;
+  }
+
+  .mono-content-body :global(.dc-card h4) {
+    margin: 0 0 12px;
+    color: var(--theme-ink);
+  }
+
+  /* Chargeback Box */
+  .mono-content-body :global(.chargeback-box) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mono-content-body :global(.code-wrap pre) {
+    background: #181917;
+    color: #f2f3ef;
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 12px 0 0;
+  }
+
+  .mono-content-body :global(.code-wrap code) {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Radar Score List */
+  .mono-content-body :global(.radar-score-list) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 18px 0;
+  }
+
+  .mono-content-body :global(.rsl-item) {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    padding: 16px 20px;
+  }
+
+  @media (max-width: 600px) {
+    .mono-content-body :global(.rsl-item) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+
+  .mono-content-body :global(.rsl-score) {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 120px;
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    text-align: center;
+  }
+
+  .mono-content-body :global(.rsl-safe .rsl-score) {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .mono-content-body :global(.rsl-good .rsl-score) {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .mono-content-body :global(.rsl-warn .rsl-score) {
+    background: #fff3e0;
+    color: #ef6c00;
+  }
+
+  .mono-content-body :global(.rsl-danger .rsl-score) {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  .mono-content-body :global(.rsl-info h4) {
+    margin: 0 0 4px;
+    font-size: 16px;
+  }
+
+  .mono-content-body :global(.rsl-info p) {
+    margin: 0;
+    font-size: 14px;
+    color: var(--theme-slate);
+  }
+
+  /* Rules Grid */
+  .mono-content-body :global(.rules-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    margin: 24px 0;
+  }
+
+  .mono-content-body :global(.rule-box) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .mono-content-body :global(.rule-box .rb-num) {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--theme-accent-hover);
+    line-height: 1;
+  }
+
+  .mono-content-body :global(.rule-box h4) {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.4;
+  }
+
+  .mono-content-body :global(.rule-box p) {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--theme-graphite);
+  }
+
+  /* Motto Box */
+  .mono-content-body :global(.motto-box) {
+    background: linear-gradient(135deg, rgba(200, 241, 77, 0.12) 0%, rgba(16, 17, 16, 0.04) 100%);
+    border: 1.5px solid var(--theme-accent);
+    border-radius: var(--r-md);
+    padding: 24px;
+    margin: 20px 0;
+  }
+
+  .mono-content-body :global(.motto-box h4) {
+    margin: 0 0 14px;
+    color: var(--theme-ink);
+  }
+
+  .mono-content-body :global(.motto-box ol) {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .mono-content-body :global(.motto-box li) {
+    font-size: 15.5px;
+    margin-bottom: 8px;
+    color: var(--theme-ink);
+  }
+
+  /* Safe Channels Grid */
+  .mono-content-body :global(.safe-channels-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin: 24px 0;
+  }
+
+  .mono-content-body :global(.sc-card) {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .mono-content-body :global(.sc-card.main-promo) {
+    border-color: var(--theme-accent);
+    background: #fbfdf5;
+    box-shadow: 0 4px 20px rgba(200, 241, 77, 0.12);
+  }
+
+  .mono-content-body :global(.scc-badge) {
+    font-size: 12px;
+    font-weight: 700;
+    color: #386400;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+
+  .mono-content-body :global(.sc-card h4) {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .mono-content-body :global(.scc-desc) {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--theme-graphite);
+  }
+
+  .mono-content-body :global(.safe-foot-banner) {
+    text-align: center;
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    padding: 18px;
+    border-radius: var(--r-sm);
+    margin-top: 24px;
+  }
+
+  .mono-content-body :global(.safe-foot-banner p) {
+    margin: 0;
+    font-size: 14.5px;
+  }
+
+  .mono-content-body :global(.safe-foot-banner a) {
+    color: var(--theme-ink);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  /* FAQs Accordion */
+  .faqs-accordion-wrap {
+    margin-top: 24px;
+  }
+
+  .faq-sub-lead {
+    font-size: 15px;
+    color: var(--theme-slate);
+    margin-bottom: 18px;
+  }
+
+  .faq-accordion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .faq-details-item {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    padding: 16px 20px;
+    transition: background 0.2s;
+  }
+
+  .faq-details-item[open] {
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(16, 17, 16, 0.05);
+  }
+
+  .faq-details-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--theme-ink);
+  }
+
+  .faq-details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .fds-num {
+    font-family: var(--font-display);
+    font-size: 13px;
+    background: rgba(16, 17, 16, 0.08);
+    color: var(--theme-slate);
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .fds-title {
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .fds-icon {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--theme-slate);
+    transition: transform 0.2s;
+  }
+
+  .faq-details-item[open] .fds-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-details-content {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--theme-line);
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--theme-graphite);
+  }
+
+  .faq-details-content p {
+    margin: 0;
+  }
+
+  /* Sidebar Sticky Styles */
+  .brand-sidebar-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 24px;
+  }
+
+  .sidebar-card {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+  }
+
+  .nav-title {
+    margin: 0 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-ink);
+  }
+
+  .quick-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quick-nav-list a {
+    color: var(--theme-slate);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .quick-nav-list a:hover {
+    color: var(--theme-ink);
+  }
+
+  .monograph-toc .toc-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .monograph-toc .toc-num {
+    font-weight: 700;
+    color: var(--theme-ink);
+    flex-shrink: 0;
+  }
+
+  /* Promo Card in Sidebar */
+  .promo-card {
+    background: linear-gradient(135deg, rgba(200, 241, 77, 0.1) 0%, rgba(16, 17, 16, 0.02) 100%);
+    border-color: var(--theme-accent);
+  }
+
+  .sc-title {
+    margin: 0 0 10px;
+    font-size: 17px;
+    color: var(--theme-ink);
+  }
+
+  .sc-desc {
+    margin: 0 0 18px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--theme-graphite);
+  }
+
+  .sc-btn-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sc-disclaimer {
+    margin: 0;
+    font-size: 12px;
+    color: var(--theme-slate);
+    text-align: center;
+  }
+
+  /* Free Bridge Card */
+  .free-bridge-card {
+    background: var(--theme-mist);
+  }
+
+  .fbc-desc {
+    margin: 0 0 14px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--theme-graphite);
+  }
+</style>

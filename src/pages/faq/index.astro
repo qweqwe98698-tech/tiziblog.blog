@@ -1,0 +1,643 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import Icon from '~/components/Icon.astro';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+import { faqCategories, allFaqs } from '~/data/faqKnowledge';
+
+const pageUrl = `${siteConfig.url}/faq/`;
+
+const pageTitle = '机场加速与科学上网全科医学大百科 (FAQ) 2026：60组硬核技术问答与故障急救 — 梯子Blog';
+const pageDescription = '梯子Blog 全科医学大百科：深度收录 60 组关于 IPLC/IEPL 专线拓扑、Clash Verge 与小火箭配置、Netflix 与 ChatGPT 1020 报错解锁、DNS 泄漏、时间同步超时及退款账单等全网最全长尾疑难解答。';
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '全科问题知识库 (FAQ)', url: pageUrl },
+  ]),
+  {
+    '@type': 'Article',
+    headline: '科学上网与机场加速全科医学大百科 (FAQ)',
+    description: pageDescription,
+    url: pageUrl,
+    inLanguage: 'zh-CN',
+    author: { '@type': 'Person', name: '梯子Blog 评测实验室' },
+    datePublished: '2026-10-15',
+    dateModified: '2026-11-02',
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: allFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: `${faq.shortAnswer} ${faq.detailedAnswer}`,
+      },
+    })),
+  },
+]);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={jsonLd}
+  appendSiteName={false}
+>
+  <article>
+    <!-- Header Hero -->
+    <header class="wrap phero">
+      <div class="phero-in rev">
+        <Breadcrumbs
+          items={[
+            { label: '首页', href: '/' },
+            { label: '全科问题知识库 (FAQ)' },
+          ]}
+        />
+
+        <div class="faq-hero-head">
+          <div class="faq-title-line">
+            <span class="pill-badge">AEO / GEO 深度百科</span>
+            <h1 class="d1 faq-h1">机场加速与科学上网全科大百科 (FAQ)</h1>
+            <span class="pill-tag">60 组长尾疑难全覆盖</span>
+            <span class="pill-tag-alt">万字专著级技术答疑</span>
+          </div>
+
+          <div class="faq-search-wrap">
+            <div class="search-box-inner">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                id="faqSearchInput"
+                placeholder="搜索任意报错关键词（如：ChatGPT 1020、DNS 泄漏、时间同步、TUN 模式、倍率...）"
+                aria-label="搜索问答库"
+              />
+              <span id="searchCount" class="search-count-badge">共 60 题</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="faq-lead-desc">
+          拒绝千篇一律的废话与含糊其辞。由梯子Blog 评测实验室资深网络架构师倾力整理，涵盖<strong>底层物理协议拓扑、全平台客户端分流、流媒体与 AI 极端风控解锁、资费退款避坑、连接超时急救与全链路隐私防护</strong>六大知识集群。每一题均包含“一句话直答结论”与“网络工程原理解析”。
+        </p>
+
+        <!-- Category Nav Pills -->
+        <div class="category-filter-pills" id="categoryFilterGroup">
+          <button type="button" class="cat-pill active" data-cat="all">全部问答 (60)</button>
+          {faqCategories.map((c) => {
+            const count = allFaqs.filter((f) => f.category === c.id).length;
+            return (
+              <button type="button" class="cat-pill" data-cat={c.id}>
+                <span>{c.icon} {c.name} ({count})</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap sec" style="padding-top:0">
+      <div class="brand-content-grid">
+        <!-- Main Column -->
+        <div class="brand-main-col">
+          <div class="faq-list-container">
+            {faqCategories.map((cat) => {
+              const catFaqs = allFaqs.filter((f) => f.category === cat.id);
+              return (
+                <section class="card-section rev faq-cluster-section" id={cat.id}>
+                  <div class="cluster-title-wrap">
+                    <span class="cluster-icon">{cat.icon}</span>
+                    <h2 class="d3 cluster-title">{cat.name}</h2>
+                    <span class="cluster-count">共 {catFaqs.length} 组技术解答</span>
+                  </div>
+
+                  <div class="cluster-faqs">
+                    {catFaqs.map((faq, idx) => (
+                      <details class="encyclopedia-faq-item" id={faq.id} data-cat={faq.category}>
+                        <summary class="efaq-summary">
+                          <div class="efaq-title-box">
+                            <span class="efaq-num">Q{idx + 1}</span>
+                            <span class="efaq-q-text">{faq.q}</span>
+                          </div>
+                          <Icon name="plus" class="ic-xs efaq-toggle-icon" />
+                        </summary>
+                        <div class="efaq-body">
+                          <div class="short-answer-block">
+                            <span class="sab-badge">🎯 结论直达：</span>
+                            <strong class="sab-text">{faq.shortAnswer}</strong>
+                          </div>
+                          <div class="detailed-answer-block">
+                            <p>{faq.detailedAnswer}</p>
+                          </div>
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- Sidebar Sticky Column -->
+        <aside class="brand-sidebar-col rev rev-d2">
+          <!-- Quick Nav -->
+          <div class="sidebar-card nav-card sticky-toc-card">
+            <h4 class="nav-title">📖 六大知识集群速览</h4>
+            <ul class="quick-nav-list monograph-toc">
+              {faqCategories.map((cat) => (
+                <li>
+                  <a href={`#${cat.id}`} class="toc-link">
+                    <span class="toc-bullet">{cat.icon}</span>
+                    <span class="toc-txt">{cat.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Quick Promo Card -->
+          <div class="sidebar-card promo-card">
+            <h3 class="sc-title">🚀 追求 0 折腾的省心网络体验？</h3>
+            <p class="sc-desc">
+              厌倦了排查各种客户端报错和节点超时？本站第一主推 <strong>光速云</strong>：配备 Windows / Mac / 安卓自研免配置客户端，采用双线 IEPL 企业专线，晚高峰实测 529Mbps / 22ms。
+            </p>
+            <div class="sc-btn-wrap">
+              <a href="/brands/guangsu/" class="btn btn-lime btn-full">
+                <span>直达光速云深度评测</span>
+                <Icon name="arrow" class="ic-xs" />
+              </a>
+              <p class="sc-disclaimer">
+                * 优惠码 <code>AMM</code> 结账享折上立减
+              </p>
+            </div>
+          </div>
+
+          <!-- Cross-links -->
+          <div class="sidebar-card guides-nav-card">
+            <h4 class="nav-title">站内相关决策矩阵</h4>
+            <ul class="quick-nav-list">
+              <li><a href="/free/">🎁 免费资源与白嫖避坑矩阵</a></li>
+              <li><a href="/warnings/">🚨 机场跑路预警雷达中心</a></li>
+              <li><a href="/speedtest/">⚡ 全网千兆晚高峰测速排行榜</a></li>
+              <li><a href="/clients/">📱 多平台客户端配置指南</a></li>
+              <li><a href="/guides/decision-tree/">🎯 2026 选型决策树</a></li>
+              <li><a href="/guides/iepl-vs-iplc-vs-bgp/">⚡ IEPL 专线深度解析</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .faq-hero-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 16px 0 20px;
+  }
+
+  .faq-title-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pill-badge {
+    background: #0b6cb2;
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pill-tag {
+    background: var(--theme-accent);
+    color: var(--theme-ink);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .pill-tag-alt {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    color: var(--theme-slate);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .faq-h1 {
+    font-size: clamp(32px, 5.2vw, 56px);
+    margin: 0;
+    line-height: 1.1;
+    text-wrap: balance;
+    word-break: keep-all;
+  }
+
+  .faq-search-wrap {
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .search-box-inner {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid var(--theme-ink);
+    border-radius: var(--r-pill);
+    padding: 8px 20px;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  }
+
+  .search-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--theme-slate);
+    flex-shrink: 0;
+  }
+
+  #faqSearchInput {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 15px;
+    color: var(--theme-ink);
+    background: transparent;
+  }
+
+  .search-count-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--theme-slate);
+    white-space: nowrap;
+    background: var(--theme-mist);
+    padding: 2px 10px;
+    border-radius: var(--r-pill);
+  }
+
+  .faq-lead-desc {
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: var(--theme-slate);
+    max-width: 82ch;
+    margin: 16px 0 24px;
+  }
+
+  .category-filter-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .cat-pill {
+    background: #ffffff;
+    border: 1.5px solid var(--theme-line);
+    padding: 8px 16px;
+    border-radius: var(--r-pill);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--theme-slate);
+  }
+
+  .cat-pill:hover,
+  .cat-pill.active {
+    background: var(--theme-ink);
+    color: #ffffff;
+    border-color: var(--theme-ink);
+  }
+
+  .brand-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 1000px) {
+    .brand-content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card-section {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+
+  .faq-cluster-section {
+    scroll-margin-top: 80px;
+  }
+
+  .cluster-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid var(--theme-line);
+    flex-wrap: wrap;
+  }
+
+  .cluster-icon {
+    font-size: 28px;
+  }
+
+  .cluster-title {
+    font-size: clamp(22px, 3vw, 28px);
+    margin: 0;
+  }
+
+  .cluster-count {
+    font-size: 13px;
+    color: var(--theme-slate);
+    background: var(--theme-mist);
+    padding: 3px 10px;
+    border-radius: var(--r-pill);
+    margin-left: auto;
+  }
+
+  .cluster-faqs {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .encyclopedia-faq-item {
+    border: 1.5px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .encyclopedia-faq-item:hover {
+    border-color: var(--theme-slate);
+  }
+
+  .encyclopedia-faq-item[open] {
+    border-color: var(--theme-ink);
+  }
+
+  .efaq-summary {
+    padding: 16px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--theme-mist);
+    user-select: none;
+    gap: 14px;
+  }
+
+  .efaq-title-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .efaq-num {
+    background: var(--theme-ink);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .efaq-q-text {
+    font-size: 15.5px;
+    color: var(--theme-ink);
+    line-height: 1.45;
+  }
+
+  .efaq-toggle-icon {
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .encyclopedia-faq-item[open] .efaq-toggle-icon {
+    transform: rotate(45deg);
+  }
+
+  .efaq-body {
+    padding: 20px;
+    background: #ffffff;
+    border-top: 1px solid var(--theme-line);
+  }
+
+  .short-answer-block {
+    background: #f4fbf5;
+    border-left: 4px solid #52c41a;
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sab-badge {
+    font-size: 12px;
+    color: #1b6325;
+    font-weight: 700;
+  }
+
+  .sab-text {
+    font-size: 14.5px;
+    color: #1b6325;
+    line-height: 1.6;
+  }
+
+  .detailed-answer-block p {
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #374151;
+    margin: 0;
+  }
+
+  /* Sidebar */
+  .sidebar-card {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .sticky-toc-card {
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  .nav-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+
+  .monograph-toc {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .monograph-toc li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--theme-slate);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+
+  .monograph-toc li a:hover {
+    background: var(--theme-mist);
+    color: var(--theme-ink);
+  }
+
+  .toc-bullet {
+    font-size: 16px;
+  }
+
+  .sc-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: var(--theme-ink);
+  }
+
+  .sc-desc {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--theme-slate);
+    margin-bottom: 16px;
+  }
+
+  .btn-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sc-disclaimer {
+    font-size: 11.5px;
+    color: var(--theme-slate);
+    text-align: center;
+    margin: 8px 0 0;
+  }
+
+  .quick-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quick-nav-list a {
+    font-size: 13.5px;
+    color: var(--theme-slate);
+    text-decoration: none;
+  }
+
+  .quick-nav-list a:hover {
+    color: var(--theme-ink);
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Client-side search and category filtering
+  const searchInput = document.getElementById('faqSearchInput') as HTMLInputElement | null;
+  const searchCount = document.getElementById('searchCount');
+  const catPills = document.querySelectorAll('.cat-pill');
+  const faqItems = document.querySelectorAll('.encyclopedia-faq-item');
+  const clusterSections = document.querySelectorAll('.faq-cluster-section');
+
+  let activeCat = 'all';
+  let searchTerm = '';
+
+  function filterFaqs() {
+    let visibleCount = 0;
+
+    faqItems.forEach((item) => {
+      const el = item as HTMLElement;
+      const cat = el.dataset.cat;
+      const text = el.innerText.toLowerCase();
+
+      const matchesCat = activeCat === 'all' || cat === activeCat;
+      const matchesSearch = !searchTerm || text.includes(searchTerm);
+
+      if (matchesCat && matchesSearch) {
+        el.style.display = 'block';
+        visibleCount++;
+      } else {
+        el.style.display = 'none';
+      }
+    });
+
+    if (searchCount) {
+      searchCount.innerText = `显示 ${visibleCount} 题`;
+    }
+
+    // Hide cluster section if all its items are hidden
+    clusterSections.forEach((sec) => {
+      const sectionEl = sec as HTMLElement;
+      const visibleChildren = sectionEl.querySelectorAll('.encyclopedia-faq-item[style*="display: block"]');
+      const allChildren = sectionEl.querySelectorAll('.encyclopedia-faq-item');
+      
+      // If searchTerm is active or category filter is active, check visibility
+      let hasVisible = false;
+      allChildren.forEach(child => {
+        if ((child as HTMLElement).style.display !== 'none') {
+          hasVisible = true;
+        }
+      });
+      sectionEl.style.display = hasVisible ? 'block' : 'none';
+    });
+  }
+
+  // Bind Search Input
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = (e.target as HTMLInputElement).value.trim().toLowerCase();
+      filterFaqs();
+    });
+  }
+
+  // Bind Category Filter Pills
+  catPills.forEach((pill) => {
+    pill.addEventListener('click', () => {
+      catPills.forEach((p) => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeCat = (pill as HTMLElement).dataset.cat || 'all';
+      filterFaqs();
+    });
+  });
+</script>

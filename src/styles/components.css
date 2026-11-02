@@ -24,12 +24,12 @@
 }
 
 /* ---- Icons ----------------------------------------------- */
-.ic { width: 20px; height: 20px; flex: none; display: inline-block; vertical-align: middle; }
-.ic-xxs { width: 12px; height: 12px; flex: none; }
-.ic-xs { width: 14px; height: 14px; flex: none; }
-.ic-sm { width: 16px; height: 16px; flex: none; }
-.ic-md { width: 20px; height: 20px; flex: none; }
-.ic-lg { width: 26px; height: 26px; flex: none; }
+.ic { width: 20px; height: 20px; flex: none; display: inline-block; vertical-align: middle; flex-shrink: 0; }
+.ic-xxs { width: 12px !important; height: 12px !important; min-width: 12px !important; max-width: 12px !important; flex: none !important; flex-shrink: 0 !important; }
+.ic-xs { width: 14px !important; height: 14px !important; min-width: 14px !important; max-width: 14px !important; flex: none !important; flex-shrink: 0 !important; }
+.ic-sm { width: 16px !important; height: 16px !important; min-width: 16px !important; max-width: 16px !important; flex: none !important; flex-shrink: 0 !important; }
+.ic-md { width: 20px !important; height: 20px !important; min-width: 20px !important; max-width: 20px !important; flex: none !important; flex-shrink: 0 !important; }
+.ic-lg { width: 26px !important; height: 26px !important; min-width: 26px !important; max-width: 26px !important; flex: none !important; flex-shrink: 0 !important; }
 
 /* ---- Buttons --------------------------------------------- */
 .btn {
@@ -67,23 +67,25 @@
 .btn-ink { background: var(--swp-ink); color: #fff; }
 .btn-ink > i { background: var(--swp-lime); color: var(--swp-ink); }
 
-.btn-outline {
+.btn-outline,
+.btn-outline:visited {
   background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25);
 }
 .btn-outline > i { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
 .btn-outline:hover {
   background: rgba(200, 241, 77, 0.15);
-  color: var(--swp-lime);
+  color: var(--swp-lime) !important;
   box-shadow: inset 0 0 0 1.5px var(--swp-lime);
 }
 .btn-outline:hover > i { background: var(--swp-lime); color: var(--swp-ink); }
 
 /* Outline button modifier */
-.btn-outline-ink {
+.btn-outline-ink,
+.btn-outline-ink:visited {
   background: rgba(200, 241, 77, 0.12);
-  color: var(--swp-lime);
+  color: var(--swp-lime) !important;
   box-shadow: inset 0 0 0 1.5px rgba(200, 241, 77, 0.45);
 }
 .btn-outline-ink > i { background: rgba(200, 241, 77, 0.2); color: var(--swp-lime); }
