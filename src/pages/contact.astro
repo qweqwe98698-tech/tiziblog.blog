@@ -1,0 +1,61 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/ContactForm.astro';
+import Icon from '~/components/Icon.astro';
+import Faq from '~/components/home/Faq.astro';
+import siteConfig from '~/config/site';
+import { graph, personSchema, breadcrumbSchema } from '~/lib/jsonld';
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '联系我们', url: `${siteConfig.url}/contact/` },
+  ]),
+]);
+---
+
+<PageLayout
+  title="联系我们 — 梯子Blog 测速反馈与品牌入库"
+  heading="提供测速线索、提交解锁反馈或申请品牌入库。"
+  eyebrow="Contact Observatory"
+  intro="如果您发现了新的高品质专线品牌，或发现已收录机场出现晚高峰断流、流媒体失效或跑路风险，欢迎随时向本观测站反馈修正。"
+  description={`联系梯子Blog：提交机场测速报告、流媒体与ChatGPT解锁线索，或进行商务与品牌评测合作。`}
+  crumbs={[{ label: '联系我们' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0" aria-labelledby="form-h">
+    <div class="contact-grid">
+      <div class="rev">
+        <h2 class="d3" id="form-h" style="margin-bottom:24px">在线提交反馈或线索</h2>
+        <ContactForm />
+      </div>
+
+      <div class="contact-aside rev rev-d1">
+        <a class="contact-card" href={`mailto:${siteConfig.contact.email}`}>
+          <i><Icon name="mail" /></i>
+          <div>
+            <b>官方联络邮箱</b>
+            <span>{siteConfig.contact.email}</span>
+          </div>
+        </a>
+        <div class="contact-card">
+          <i><Icon name="pin" /></i>
+          <div>
+            <b>观测站实验室所在地</b>
+            <span>{siteConfig.contact.location}</span>
+          </div>
+        </div>
+        <div class="contact-card">
+          <i><Icon name="spark" /></i>
+          <div>
+            <b>测速与收录准则</b>
+            <span>真实抓包 · 拒绝造假 · 动态复核</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Faq headingLevel="h2" id="faq" />
+</PageLayout>

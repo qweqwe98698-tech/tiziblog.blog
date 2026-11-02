@@ -1,0 +1,30 @@
+---
+import Icon from '../Icon.astro';
+import Button from '../Button.astro';
+import { cta } from '~/data/highlights';
+
+interface Props {
+  id?: string;
+}
+
+const { id = 'cta' } = Astro.props;
+---
+
+<section class="wrap sec-tight" id={id} aria-labelledby="cta-h">
+  <div class="cta rev">
+    <span class="cta-ring a" aria-hidden="true"></span>
+    <span class="cta-ring b" aria-hidden="true"></span>
+
+    <p class="eyebrow">数据驱动 · 透明避坑</p>
+    <h2 class="d2" id="cta-h">{cta.title}</h2>
+    <p>{cta.body}</p>
+
+    <div class="cta-actions">
+      <Button href="/brands/" variant="ink">{cta.primaryLabel}</Button>
+      <a class="btn btn-outline-ink" href="/speedtest/">
+        <span>查看 17 家真机测速大榜</span>
+        <Icon name="arrow" class="ic-xs" />
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,78 @@
+---
+import Icon from './Icon.astro';
+import siteConfig from '~/config/site';
+import { footerNav } from '~/data/navigation';
+import { brands } from '~/data/brands';
+
+const topBrands = brands.filter((b) => b.isFeatured).slice(0, 5);
+const year = new Date().getFullYear();
+---
+
+<footer class="ftr">
+  <div class="wrap ftr-top">
+    <div>
+      <a class="ftr-brand" href="/" aria-label={siteConfig.name}>
+        <img
+          src={siteConfig.logo.footer.src}
+          alt={`${siteConfig.name} — home`}
+          width={siteConfig.logo.footer.width}
+          height={siteConfig.logo.footer.height}
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      <p class="ftr-about">{siteConfig.about}</p>
+      <div class="ftr-soc">
+        {
+          siteConfig.social.map((s) => (
+            <a href={s.href} aria-label={s.label} rel="noopener noreferrer" target="_blank">
+              <Icon name={s.icon} class="ic-sm" />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <nav aria-labelledby="ftr-explore">
+      <h2 id="ftr-explore">核心导航</h2>
+      <ul class="ftr-links">
+        {footerNav.explore.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav aria-labelledby="ftr-brands">
+      <h2 id="ftr-brands">重点机场</h2>
+      <ul class="ftr-links">
+        {topBrands.map((b) => <li><a href={`/brands/${b.id}/`}>{b.name}（{b.lineType[0]}）</a></li>)}
+      </ul>
+    </nav>
+
+    <div>
+      <h2>联系与合作</h2>
+      <div class="ftr-cbox">
+        <Icon name="mail" class="ic-sm" />
+        <span><a href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a></span>
+      </div>
+      <div class="ftr-cbox">
+        <Icon name="pin" class="ic-sm" />
+        <span>{siteConfig.contact.location}</span>
+      </div>
+      <div class="ftr-cbox">
+        <Icon name="spark" class="ic-sm" />
+        <span>{siteConfig.contact.availability}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap ftr-bot" style="flex-direction:column;align-items:flex-start;gap:12px">
+    <div style="display:flex;justify-content:space-between;width:100%;align-items:center;flex-wrap:wrap;gap:14px">
+      <p>&copy; {year} {siteConfig.copyrightHolder}. 保留所有权利。</p>
+      <nav aria-label="Legal">
+        {footerNav.legal.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+    </div>
+    <p style="font-size:12px;color:var(--theme-slate);line-height:1.6;margin:0">
+      * 透明度声明：本站展示的节点延迟、带宽与解锁状态均基于特定网络测试环境下的真实实测快照。本站包含赞助推广链接，通过链接购买可能为本站带来运维支持，不影响您的支付价格。建议按需先月付实测后再考虑长期使用。
+    </p>
+  </div>
+</footer>

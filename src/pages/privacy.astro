@@ -1,0 +1,41 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import siteConfig from '~/config/site';
+
+const updated = '最近更新日期：2026年3月';
+---
+
+<PageLayout
+  title="隐私政策"
+  heading="隐私政策"
+  eyebrow="Legal"
+  intro="关于本站点如何处理与保护访客数据的信息说明。"
+  description={`${siteConfig.name} 访客数据处理与隐私保护政策。`}
+  crumbs={[{ label: 'Privacy' }]}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <div class="prose rev">
+      <h2>信息收集说明</h2>
+      <p>
+        本站为纯静态网站，遵循极简与隐私优先原则。默认不使用任何追踪 Cookie，不加载第三方数据追踪脚本。所有字体资产均本地托管于本域名下，不存在外部 CDN 数据泄漏风险。
+      </p>
+
+      <h2>访问日志</h2>
+      <p>
+        托管服务商在提供服务过程中，可能会记录标准的基础访问日志（包括 IP 地址、请求时间、访问路径及浏览器 User-Agent），此类信息仅用于保障服务安全与正常运行。
+      </p>
+
+      <h2>表单与联络信息</h2>
+      <p>
+        当您主动通过本站联系表单或电子邮件与我们沟通时，您提交的姓名、邮箱及留言内容仅用于回复您的咨询与业务联络，我们绝不会将您的个人信息出售或透露给第三方。
+      </p>
+
+      <h2>联系我们</h2>
+      <p>
+        若您对本隐私政策有任何疑问或建议，欢迎发送邮件至 <a href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a>。
+      </p>
+
+      <p class="mini muted">{updated}</p>
+    </div>
+  </section>
+</PageLayout>

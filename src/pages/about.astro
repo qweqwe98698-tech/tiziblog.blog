@@ -1,0 +1,38 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import About from '~/components/home/About.astro';
+import Toolkit from '~/components/home/Toolkit.astro';
+import Process from '~/components/home/Process.astro';
+import Awards from '~/components/home/Awards.astro';
+import Testimonials from '~/components/home/Testimonials.astro';
+import StatsBand from '~/components/home/StatsBand.astro';
+import Cta from '~/components/home/Cta.astro';
+import siteConfig from '~/config/site';
+import { graph, personSchema, breadcrumbSchema } from '~/lib/jsonld';
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '关于本站', url: `${siteConfig.url}/about/` },
+  ]),
+]);
+---
+
+<PageLayout
+  title="关于本站 — 梯子Blog 网络加速与专线可观测实验室"
+  heading="坚持真实测速与透明审计，让跨境加速不再踩雷。"
+  eyebrow="About Observatory"
+  intro="梯子Blog 专注于全球网络加速、IEPL/IPLC 物理专线与主流代理客户端可观测评测。拒绝虚构吹捧与公关软文，以真机晚高峰抓包测速为基准，为开发者、出海团队与跨境网民提供值得信赖的选型参考。"
+  description="关于梯子Blog：全球网络加速可观测实验室，收录 42 家主流机场，存档 17 家真机测速图与流媒体/ChatGPT 解锁矩阵。"
+  crumbs={[{ label: '关于本站' }]}
+  jsonLd={jsonLd}
+>
+  <About headingLevel="h2" id="background" />
+  <StatsBand />
+  <Toolkit />
+  <Process />
+  <Awards />
+  <Testimonials />
+  <Cta />
+</PageLayout>

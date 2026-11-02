@@ -1,0 +1,245 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import Button from '~/components/Button.astro';
+import { guides } from '~/data/guides';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/guides/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '选购与避坑攻略专题', url: pageUrl },
+  ]),
+  {
+    '@type': 'ItemList',
+    name: '2026 梯子机场选购、专线科普与避坑指南专栏',
+    description: '收录面向新老用户的网络翻墙选型决策树、IEPL/IPLC 专线科普、防跑路防坑指南与流媒体解锁秘籍。',
+    numberOfItems: guides.length,
+    itemListElement: guides.map((g, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: g.title,
+      url: `${siteConfig.url}/guides/${g.slug}/`,
+    })),
+  },
+]);
+---
+
+<PageLayout
+  title="选购攻略与避坑指南 — 2026梯子机场选型决策树与专线科普 — 梯子Blog"
+  heading="选购攻略与避坑指南专栏"
+  eyebrow="Observatory Knowledge Hub"
+  intro="拒绝信息茧房与公关软文。由资深网络评测工程师执笔，梳理 2026 科学选型决策树、IEPL/IPLC 专线原理、防跑路避坑法则与流媒体/ChatGPT 原生解锁内幕。"
+  description="梯子Blog 选购攻略专题：涵盖 2026 机场选型决策树、IEPL 专线与普通中转深度对比、防跑路六大黄金法则、ChatGPT 解锁与客户端分流实操教程。"
+  crumbs={[{ label: '选购攻略' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Guides Grid -->
+    <div class="guides-grid">
+      {
+        guides.map((guide, idx) => (
+          <article class:list={['guide-card', 'rev', idx > 0 && `rev-d${(idx % 3) + 1}`]}>
+            <div class="gc-meta">
+              <span class="gc-cat">{guide.category}</span>
+              <span class="gc-time">{guide.readTime}</span>
+              <span class="gc-date">{guide.publishDate}</span>
+            </div>
+
+            <h2 class="gc-title">
+              <a href={`/guides/${guide.slug}/`}>{guide.title}</a>
+            </h2>
+
+            <p class="gc-summary">{guide.summary}</p>
+
+            <div class="gc-takeaways">
+              <span class="takeaway-head">核心结论点拨：</span>
+              <ul>
+                {guide.keyTakeaways.slice(0, 2).map((takeaway) => (
+                  <li>
+                    <Icon name="check" class="ic-xxs" />
+                    <span>{takeaway}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="gc-footer">
+              <a href={`/guides/${guide.slug}/`} class="gc-read-btn">
+                <span>阅读完整专题</span>
+                <Icon name="arrow" class="ic-xs" />
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Novice Recommendation Callout -->
+    <div class="guide-cta rev rev-d2">
+      <div class="gcta-content">
+        <h3 class="d3">不想钻研繁琐技术细节？直接查看 2026 综合霸榜首选</h3>
+        <p>
+          如果您希望省去所有学习与配置成本，一步到位获得稳定、低延迟且支持全平台自研客户端的网络加速体验，可以直接了解本站第一主推的 <strong>光速云</strong>。
+        </p>
+      </div>
+      <div class="gcta-actions">
+        <a href="/brands/guangsu/" class="btn btn-lime">查看光速云深度评测与优惠码</a>
+        <Button href="/brands/" variant="outline">浏览全部 42 家机场品牌库</Button>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .guides-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+  @media (max-width: 600px) {
+    .guides-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .guide-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .guide-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .gc-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+    flex-wrap: wrap;
+  }
+  .gc-cat {
+    background: rgba(200, 241, 77, 0.1);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid rgba(200, 241, 77, 0.25);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .gc-title {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.4;
+  }
+  .gc-title a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .gc-title a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .gc-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .gc-takeaways {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .takeaway-head {
+    font-size: 0.75rem;
+    color: var(--c-lime, #c8f14d);
+    font-weight: 600;
+  }
+  .gc-takeaways ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .gc-takeaways li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.5;
+  }
+  .gc-takeaways li :global(.ic-xxs) {
+    color: var(--c-lime, #c8f14d);
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+  .gc-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .gc-read-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--c-lime, #c8f14d);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: gap 0.2s;
+  }
+  .gc-read-btn:hover {
+    gap: 0.6rem;
+  }
+
+  /* Guide CTA */
+  .guide-cta {
+    background: linear-gradient(135deg, #181d16 0%, #121312 100%);
+    border: 1px solid rgba(200, 241, 77, 0.3);
+    border-radius: 16px;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .gcta-content {
+    max-width: 650px;
+  }
+  .gcta-content h3 {
+    margin: 0 0 0.75rem;
+  }
+  .gcta-content p {
+    margin: 0;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .gcta-content strong {
+    color: var(--c-lime, #c8f14d);
+  }
+  .gcta-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+</style>

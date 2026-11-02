@@ -1,0 +1,248 @@
+---
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHeading from '../SectionHeading.astro';
+import { workHeading } from '~/data/highlights';
+import { brands } from '~/data/brands';
+
+// Showcase featured measured brands with real speedtest images
+const speedtestShowcase = brands
+  .filter((b) => Boolean(b.speedImage))
+  .slice(0, 6);
+---
+
+<section class="wrap sec" id="speedtests" aria-labelledby="work-h">
+  <SectionHeading
+    class="rev"
+    eyebrow={workHeading.eyebrow}
+    title={workHeading.title}
+    id="work-h"
+  >
+    <Button href="/speedtest/" variant="outline">进入 17 家实测测速大榜</Button>
+  </SectionHeading>
+
+  <div class="speed-showcase-grid">
+    {
+      speedtestShowcase.map((brand, i) => (
+        <article class:list={['showcase-card', 'rev', i % 3 > 0 && `rev-d${i % 3}`]}>
+          <div class="sc-header">
+            <span class="sc-rank">#{brand.rank}</span>
+            <h3 class="sc-title">
+              <a href={`/brands/${brand.id}/`}>{brand.name}</a>
+            </h3>
+            <span class="sc-price">{brand.pricingMin}</span>
+          </div>
+
+          <div class="sc-img-frame">
+            <a href="/speedtest/" aria-label={`查看 ${brand.name} 高清测速大图`}>
+              <img
+                src={brand.speedImage}
+                alt={`${brand.name} 2026晚高峰节点真机测速图`}
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="sc-img-overlay">
+                <Icon name="chart" class="ic-xs" />
+                <span>查看实测大图</span>
+              </div>
+            </a>
+          </div>
+
+          <div class="sc-specs">
+            <div class="sc-badge-row">
+              {brand.lineType.map((lt) => (
+                <span class="sc-line-badge">{lt}</span>
+              ))}
+              {brand.hasCustomClient && <span class="sc-client-badge">自研客户端</span>}
+            </div>
+
+            <div class="sc-unlocks">
+              <span class="ul-tag">Netflix: <em class={brand.unlocks.netflix === 'supported' ? 'ok' : 'cond'}>4K</em></span>
+              <span class="ul-tag">ChatGPT: <em class={brand.unlocks.chatgpt === 'supported' ? 'ok' : 'cond'}>支持</em></span>
+            </div>
+          </div>
+
+          <div class="sc-cta-row">
+            <a href={`/brands/${brand.id}/`} class="btn btn-outline btn-sm">测速与解锁详评</a>
+            <a
+              href={brand.affUrl}
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              class="btn btn-lime btn-sm"
+            >
+              <span>官网直达</span>
+              <Icon name="arrow" class="ic-xs" />
+            </a>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="showcase-foot rev rev-d1">
+    <p>
+      已累计对 17 家主流品牌完成 1000M FTTH 晚高峰并发测速。
+      <a href="/speedtest/">查看全部 17 家实测大图与解锁对照表 →</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .speed-showcase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.75rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 480px) {
+    .speed-showcase-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .showcase-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .showcase-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .sc-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .sc-rank {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-dim, #8b928c);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+  .sc-title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .sc-title a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .sc-title a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .sc-price {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+    font-size: 0.95rem;
+  }
+  .sc-img-frame {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 170px;
+    background: #000;
+    border: 1px solid var(--c-border, #242524);
+  }
+  .sc-img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.2s;
+  }
+  .sc-img-frame:hover img {
+    transform: scale(1.04);
+  }
+  .sc-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 17, 16, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .sc-img-frame:hover .sc-img-overlay {
+    opacity: 1;
+  }
+  .sc-specs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+  }
+  .sc-badge-row {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .sc-line-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .sc-client-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    background: rgba(64, 150, 255, 0.12);
+    color: #69b1ff;
+  }
+  .sc-unlocks {
+    display: flex;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .ul-tag em.ok {
+    color: var(--c-lime, #c8f14d);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .ul-tag em.cond {
+    color: #faad14;
+    font-style: normal;
+  }
+  .sc-cta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+  .showcase-foot {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+  .showcase-foot p {
+    color: var(--c-text-muted, #b2b8b3);
+    font-size: 0.95rem;
+  }
+  .showcase-foot a {
+    color: var(--c-lime, #c8f14d);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.4rem;
+  }
+  .showcase-foot a:hover {
+    text-decoration: underline;
+  }
+</style>

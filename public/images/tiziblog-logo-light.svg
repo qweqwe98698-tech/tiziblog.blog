@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none" width="160" height="40">
+  <rect x="2" y="5" width="30" height="30" rx="8" fill="#2B2C2A"/>
+  <path d="M9 13h16M17 13v14" stroke="#C8F14D" stroke-width="2.8" stroke-linecap="round"/>
+  <circle cx="23" cy="13" r="1.8" fill="#C8F14D"/>
+  <text x="40" y="27" font-family="'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif" font-size="21" font-weight="700" letter-spacing="-0.5px" fill="#FFFFFF">Tizi<tspan fill="#C8F14D">Blog</tspan></text>
+</svg>

@@ -1,0 +1,37 @@
+---
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHeading from '../SectionHeading.astro';
+import { journalHeading } from '~/data/highlights';
+import { guides } from '~/data/guides';
+
+const featuredGuides = guides.slice(0, 3);
+---
+
+<section class="wrap sec" id="journal" aria-labelledby="jrn-h">
+  <SectionHeading class="rev" eyebrow={journalHeading.eyebrow} title={journalHeading.title} id="jrn-h">
+    <Button href={journalHeading.ctaHref} variant="outline">{journalHeading.ctaLabel}</Button>
+  </SectionHeading>
+
+  <div class="posts">
+    {
+      featuredGuides.map((guide, i) => (
+        <article class:list={['post', 'rev', i % 3 > 0 && `rev-d${i % 3}`]}>
+          <div class="post-meta">
+            <em>{guide.category}</em>
+            <span>{guide.readTime}</span>
+            <span aria-hidden="true">&middot;</span>
+            <time datetime={guide.publishDate}>{guide.publishDate}</time>
+          </div>
+          <h3>
+            <a href={`/guides/${guide.slug}/`}>{guide.title}</a>
+          </h3>
+          <p>{guide.summary}</p>
+          <a class="post-link" href={`/guides/${guide.slug}/`}>
+            阅读完整攻略 <Icon name="arrow" class="ic-xs" />
+          </a>
+        </article>
+      ))
+    }
+  </div>
+</section>

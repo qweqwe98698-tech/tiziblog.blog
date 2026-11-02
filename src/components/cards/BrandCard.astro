@@ -1,0 +1,357 @@
+---
+import Icon from '../Icon.astro';
+import type { BrandData } from '~/data/brands';
+
+interface Props {
+  brand: BrandData;
+  class?: string;
+}
+
+const { brand, class: className } = Astro.props;
+---
+
+<article class:list={['brand-card', brand.isMainPromo && 'is-main-promo', className]}>
+  <div class="bc-top">
+    <div class="bc-title-wrap">
+      <span class:list={['bc-rank', brand.rank <= 3 ? 'rank-top3' : '']}>
+        {brand.rank <= 9 ? `0${brand.rank}` : brand.rank}
+      </span>
+      <div>
+        <h3 class="bc-name">
+          <a href={`/brands/${brand.id}/`}>{brand.name}</a>
+          {brand.isMainPromo && <span class="badge-main">第一主推</span>}
+          {brand.hasCustomClient && <span class="badge-sub">自研客户端</span>}
+        </h3>
+        <p class="bc-price">
+          起步资费：<strong>{brand.pricingMin}</strong>
+          {brand.discountCode && (
+            <span class="bc-code" title="点击详情可一键复制优惠码">
+              券码 <code>{brand.discountCode}</code>
+            </span>
+          )}
+        </p>
+      </div>
+    </div>
+
+    <div class="bc-status-pill">
+      {brand.speedImage ? (
+        <span class="status-tag status-measured">
+          <i class="dot-green"></i> 包含真机测速
+        </span>
+      ) : (
+        <span class="status-tag status-vendor">
+          <i class="dot-gray"></i> 官方标称数据
+        </span>
+      )}
+    </div>
+  </div>
+
+  <p class="bc-summary">{brand.summary}</p>
+
+  <div class="bc-meta-row">
+    <div class="bc-pills">
+      {brand.lineType.map((lt) => <span class="pill-tech">{lt}</span>)}
+      {brand.protocols.slice(0, 2).map((p) => <span class="pill-proto">{p}</span>)}
+    </div>
+
+    <div class="bc-unlock-icons" title="流媒体与AI支持状态">
+      <span class:list={['unlock-tag', brand.unlocks.chatgpt]}>ChatGPT</span>
+      <span class:list={['unlock-tag', brand.unlocks.netflix]}>Netflix</span>
+      <span class:list={['unlock-tag', brand.unlocks.youtube]}>4K YouTube</span>
+    </div>
+  </div>
+
+  <div class="bc-actions">
+    <a href={`/brands/${brand.id}/`} class="btn-detail">
+      <span>查看完整评测 & 测速数据</span>
+      <Icon name="arrow" class="ic-xs" />
+    </a>
+    {brand.affUrl ? (
+      <a
+        href={brand.affUrl}
+        target="_blank"
+        rel="nofollow sponsored noopener"
+        class="btn-aff"
+      >
+        <span>官网直达</span>
+        <Icon name="spark" class="ic-xs" />
+      </a>
+    ) : (
+      <span class="btn-aff disabled">暂无链接</span>
+    )}
+  </div>
+</article>
+
+<style>
+  .brand-card {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    transition: transform 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    position: relative;
+  }
+
+  .brand-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--theme-ink);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+  }
+
+  .brand-card.is-main-promo {
+    background: #ffffff;
+    border: 2px solid var(--theme-accent);
+    box-shadow: 0 8px 30px rgba(200, 241, 77, 0.16);
+  }
+
+  .bc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bc-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bc-rank {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--theme-slate);
+    line-height: 1;
+    width: 32px;
+  }
+
+  .bc-rank.rank-top3 {
+    color: var(--theme-ink);
+  }
+
+  .bc-name {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bc-name a {
+    color: var(--theme-ink);
+  }
+  .bc-name a:hover {
+    color: #4a5c0b;
+    text-decoration: underline;
+  }
+
+  .badge-main {
+    background: var(--theme-accent);
+    color: var(--theme-ink);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--r-pill);
+    letter-spacing: 0.05em;
+  }
+
+  .badge-sub {
+    background: var(--theme-ink);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: var(--r-pill);
+  }
+
+  .bc-price {
+    margin: 4px 0 0;
+    font-size: 13.5px;
+    color: var(--theme-slate);
+  }
+
+  .bc-price strong {
+    color: var(--theme-ink);
+    font-size: 15px;
+  }
+
+  .bc-code {
+    margin-left: 8px;
+    font-size: 12px;
+  }
+
+  .bc-code code {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: #b24700;
+  }
+
+  .status-tag {
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+  }
+
+  .status-measured {
+    background: #e8f9e9;
+    color: #247530;
+  }
+
+  .status-vendor {
+    background: #eaecee;
+    color: #555d65;
+  }
+
+  .dot-green {
+    width: 6px;
+    height: 6px;
+    background: #3fa34d;
+    border-radius: 50%;
+  }
+
+  .dot-gray {
+    width: 6px;
+    height: 6px;
+    background: #889098;
+    border-radius: 50%;
+  }
+
+  .bc-summary {
+    font-size: 14.5px;
+    color: var(--theme-slate);
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .bc-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    border-top: 1px dashed var(--theme-line);
+    border-bottom: 1px dashed var(--theme-line);
+  }
+
+  .bc-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill-tech {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--theme-ink);
+    font-weight: 600;
+  }
+
+  .pill-proto {
+    background: rgba(0, 0, 0, 0.04);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--theme-slate);
+  }
+
+  .bc-unlock-icons {
+    display: flex;
+    gap: 6px;
+  }
+
+  .unlock-tag {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  .unlock-tag.supported {
+    background: #e1f7e4;
+    color: #1b6325;
+  }
+
+  .unlock-tag.conditional {
+    background: #fdf5e2;
+    color: #8c6000;
+  }
+
+  .unlock-tag.unsupported {
+    background: #fce8e8;
+    color: #a81c1c;
+  }
+
+  .bc-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .btn-detail {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    color: var(--theme-ink);
+    padding: 9px 14px;
+    border-radius: var(--r-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .btn-detail:hover {
+    border-color: var(--theme-ink);
+    background: var(--theme-mist);
+  }
+
+  .btn-aff {
+    background: var(--theme-ink);
+    color: #ffffff;
+    padding: 9px 18px;
+    border-radius: var(--r-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-aff:hover {
+    background: #2a2c2a;
+    color: var(--theme-accent);
+  }
+
+  .btn-aff.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>

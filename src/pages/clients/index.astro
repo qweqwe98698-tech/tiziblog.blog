@@ -1,0 +1,603 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import { clientPlatforms, proxyClients } from '~/data/proxyClients';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/clients/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '客户端指南与下载中心', url: pageUrl },
+  ]),
+  {
+    '@type': 'HowTo',
+    name: '2026 通用代理客户端订阅导入与配置 4 步极速指南',
+    description: '指导用户如何将机场通用订阅链接导入 Clash Verge Rev、Shadowrocket 小火箭或 v2rayNG 并开启系统代理。',
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: '获取机场订阅链接',
+        text: '在已购买的机场后台（如光速云、暮光加速）用户中心，点击“一键订阅”并复制通用订阅 URL。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: '添加至客户端配置文件',
+        text: '打开客户端（如 Clash Verge Rev），点击 Profiles（配置），粘贴刚才复制的 URL 并点击 Download（下载/保存）。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: '节点连通性测速与选路',
+        text: '在节点列表点击测试延迟图标，建议优先选择延迟低于 60ms 且带 IEPL/IPLC 专线标识的香港或日本节点。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: '开启系统代理与规则分流',
+        text: '在主界面打开“系统代理（System Proxy）”开关，模式选择“Rule（规则分流）”，即可实现国内直连、海外加速。',
+      },
+    ],
+  },
+]);
+---
+
+<PageLayout
+  title="2026多平台代理客户端指南 — Clash Verge / 小火箭 / v2rayNG 下载与通用配置教程 — 梯子Blog"
+  heading="多平台代理客户端与配置中心"
+  eyebrow="Client Ecosystem & Setup Manual"
+  intro="涵盖 Windows、iOS、Android、macOS、Linux 及 OpenWrt 软路由六大平台主流工具。提供客观的客户端选型建议、通用订阅导入四步法与常见网络报错排查方案。"
+  description="2026 代理翻墙客户端选型与配置指南：精选 Clash Verge Rev、Shadowrocket (小火箭)、v2rayNG、Surge 等工具，手把手图文讲解订阅导入、规则分流与端口冲突排查。"
+  crumbs={[{ label: '客户端指南' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Quick Notice Banner for Novices -->
+    <div class="novice-banner rev">
+      <div class="nb-left">
+        <Icon name="spark" class="ic-md accent" />
+        <div>
+          <strong class="nb-title">新手不想折腾第三方客户端？</strong>
+          <p class="nb-desc">
+            如果您觉得配置规则、转换订阅格式太繁琐，推荐选择提供<strong>免配置自研一键登录客户端</strong>的专线品牌（如本站主推的<strong>光速云</strong>与<strong>飞猫云</strong>），下载安装后输入账号密码即可一键极速联网。
+          </p>
+        </div>
+      </div>
+      <div class="nb-right">
+        <a href="/brands/guangsu/" class="btn btn-lime btn-sm">查看光速云自研客户端</a>
+      </div>
+    </div>
+
+    <!-- Platform Selector Tabs -->
+    <div class="platform-bar rev rev-d1" id="platformBar">
+      <div class="platform-tabs" role="tablist" aria-label="客户端支持平台切换">
+        {
+          clientPlatforms.map((p, idx) => (
+            <button
+              class:list={['p-tab', idx === 0 ? 'is-active' : '']}
+              data-platform={p.id}
+              role="tab"
+              aria-selected={idx === 0 ? 'true' : 'false'}
+            >
+              {p.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Clients Grid -->
+    <div class="clients-grid" id="clientsGrid">
+      {
+        proxyClients.map((client) => (
+          <article
+            class="client-card rev"
+            data-platform={client.platform}
+          >
+            <div class="cc-head">
+              <div class="cc-title-wrap">
+                <h3 class="cc-name">{client.name}</h3>
+                <span class="cc-platform-tag">{client.platform.toUpperCase()}</span>
+              </div>
+              {client.badge && (
+                <span class:list={['cc-badge', client.isTopPick ? 'top-pick' : '']}>
+                  {client.badge}
+                </span>
+              )}
+            </div>
+
+            <div class="cc-body">
+              <div class="cc-prop">
+                <span class="prop-lbl">核心能力与特性：</span>
+                <p class="prop-val">{client.features}</p>
+              </div>
+
+              <div class="cc-prop highlight">
+                <span class="prop-lbl">观测站推荐适用人群：</span>
+                <p class="prop-val">{client.recommendedFor}</p>
+              </div>
+            </div>
+
+            <div class="cc-foot">
+              <span class="cc-status-dot"></span>
+              <span class="cc-note">兼容所有主流机场通用订阅 (Clash / V2Ray / Sing-box)</span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Universal Step-by-Step Configuration Guide -->
+    <div class="setup-guide-box rev rev-d1" id="tutorial">
+      <div class="sg-head">
+        <p class="eyebrow">Universal Setup Tutorial</p>
+        <h2 class="d3">4 步极速上手：通用订阅链接如何导入与开启代理？</h2>
+        <p class="sg-intro">
+          无论您使用的是 Clash Verge Rev、Shadowrocket 还是 v2rayNG，订阅导入的底层逻辑完全相通。只需遵循以下四步：
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3>复制机场订阅链接</h3>
+          <p>
+            登录您购买的机场官网（如 <a href="/brands/guangsu/">光速云</a> 或 <a href="/brands/muguang/">暮光加速</a>），在用户仪表盘找到“快捷导入”或“复制通用订阅”按钮，将以 <code>http(s)://</code> 开头的订阅网址存入剪贴板。
+          </p>
+          <span class="step-tip">提示：切勿泄露订阅链接，包含您的套餐认证秘钥。</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3>粘贴至客户端配置面板</h3>
+          <p>
+            打开客户端配置管理界面（Clash 系列为 Profiles；小火箭点击右上角 <code>+</code> 号选择类型为 Subscribe），将剪贴板中的订阅链接粘贴到 URL 栏，点击“下载/保存”拉取最新节点。
+          </p>
+          <span class="step-tip">提示：建议开启“自动定时更新”，防止节点 IP 过期。</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3>测速并优选低延迟节点</h3>
+          <p>
+            进入客户端“代理/Proxies”页面，点击闪电或 Wi-Fi 图标执行真机延迟测试。优先挑选响应在 30~80ms 以内的香港、日本或新加坡专线节点。
+          </p>
+          <span class="step-tip">提示：看视频建议选香港/新加坡；访问海外 AI 建议选美西/日本。</span>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <h3>开启系统代理与规则分流</h3>
+          <p>
+            在客户端总控面板打开“系统代理 (System Proxy)”或“TUN 模式”，分流模式务必选择 <strong>Rule（规则分流）</strong>。此时国内网站直连不耗流量，被墙海外服务全自动翻墙。
+          </p>
+          <span class="step-tip">提示：如需特定软件接管所有流量，可开启 TUN 虚拟网卡。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Troubleshooting FAQ Section -->
+    <div class="trouble-box rev rev-d2">
+      <div class="tb-head">
+        <p class="eyebrow">Troubleshooting</p>
+        <h3 class="d3">客户端高频报错与疑难杂症排查自救手册</h3>
+      </div>
+
+      <div class="tb-list">
+        <details class="tb-item" open>
+          <summary class="tb-q">
+            <strong>节点测速显示全部 Timeout（超时或红点），但机场后台显示正常？</strong>
+            <Icon name="plus" class="ic-xs" />
+          </summary>
+          <div class="tb-a">
+            <p>
+              <strong>可能原因一：系统时间不同步。</strong> 现代加密协议（VLESS / Reality / Trojan / Shadowsocks2022）对系统时间校验极严，误差超过 60 秒将直接拒绝握手。请进入 Windows 或 Mac 系统设置，点击“立即同步时间”。<br />
+              <strong>可能原因二：机场订阅配置未刷新。</strong> 机场服务器入口 IP 变更后，旧配置失效。请在客户端 Profiles 面板右键点击该订阅执行“Update（更新）”。
+            </p>
+          </div>
+        </details>
+
+        <details class="tb-item">
+          <summary class="tb-q">
+            <strong>开启代理后无法上网，提示“Port 7890 occupied”或“系统代理设置失败”？</strong>
+            <Icon name="plus" class="ic-xs" />
+          </summary>
+          <div class="tb-a">
+            <p>
+              这是由于本地同时开启了其他翻墙工具（如百度网盘加速、其他 VPN 或旧版 Clash），导致 7890/7897 端口被占用。解决方法：进入任务管理器彻底结束冲突进程，或在 Clash Verge 设置中将“Mixed Port”由 7890 更改为 7895 等其他空闲端口。
+            </p>
+          </div>
+        </details>
+
+        <details class="tb-item">
+          <summary class="tb-q">
+            <strong>为什么国内 APP（如微信、美团、淘宝）加载变慢或频繁提示异地登录？</strong>
+            <Icon name="plus" class="ic-xs" />
+          </summary>
+          <div class="tb-a">
+            <p>
+              请检查客户端的分流模式是否错误设置成了 <strong>Global（全局模式）</strong>。在全局模式下，所有流量都会绕经海外机房，不仅浪费流量，更会导致国内风控报警。请始终将其切换为 <strong>Rule（规则分流模式）</strong>。
+            </p>
+          </div>
+        </details>
+
+        <details class="tb-item">
+          <summary class="tb-q">
+            <strong>苹果手机 iPhone / iPad 在国区 App Store 搜索不到小火箭怎么办？</strong>
+            <Icon name="plus" class="ic-xs" />
+          </summary>
+          <div class="tb-a">
+            <p>
+              Shadowrocket 受到国区政策限制仅在海外区（如美区、港区、日区）App Store 上架。您可以注册一个免信用卡的海外 Apple ID，购买充值礼品卡进行购买（官方价格 2.99 美元）；或者直接选用光速云等提供一键苹果专用免配置客户端的机场。
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  /* Novice Banner */
+  .novice-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #181d16 0%, #131413 100%);
+    border: 1px solid rgba(200, 241, 77, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    .novice-banner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  .nb-left {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .accent {
+    color: var(--c-lime, #c8f14d);
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+  .nb-title {
+    font-size: 1.1rem;
+    color: var(--c-text, #e8ece9);
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+  .nb-desc {
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .nb-desc strong {
+    color: var(--c-lime, #c8f14d);
+  }
+  .nb-right {
+    flex-shrink: 0;
+  }
+
+  /* Platform Bar */
+  .platform-bar {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--c-border, #242524);
+    padding-bottom: 1rem;
+  }
+  .platform-tabs {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .p-tab {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    color: var(--c-text-muted, #b2b8b3);
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .p-tab:hover {
+    color: var(--c-text, #e8ece9);
+    border-color: var(--c-border-hi, #3e423f);
+  }
+  .p-tab.is-active {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+    font-weight: 700;
+    border-color: var(--c-lime, #c8f14d);
+  }
+
+  /* Clients Grid */
+  .clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 4.5rem;
+  }
+  @media (max-width: 480px) {
+    .clients-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .client-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .client-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .cc-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .cc-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .cc-name {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .cc-platform-tag {
+    font-size: 0.7rem;
+    color: var(--c-text-dim, #8b928c);
+    letter-spacing: 0.05em;
+  }
+  .cc-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .cc-badge.top-pick {
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid rgba(200, 241, 77, 0.3);
+  }
+  .cc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .cc-prop {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .prop-lbl {
+    font-size: 0.8rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .prop-val {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .cc-prop.highlight {
+    background: rgba(0, 0, 0, 0.25);
+    border-left: 2px solid var(--c-lime, #c8f14d);
+    padding: 0.6rem 0.8rem;
+    border-radius: 0 6px 6px 0;
+  }
+  .cc-prop.highlight .prop-val {
+    color: var(--c-text, #e8ece9);
+  }
+  .cc-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .cc-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c-lime, #c8f14d);
+    flex-shrink: 0;
+  }
+  .cc-note {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+
+  /* Setup Guide Box */
+  .setup-guide-box {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-bottom: 4rem;
+  }
+  @media (max-width: 600px) {
+    .setup-guide-box {
+      padding: 1.25rem;
+    }
+  }
+  .sg-head {
+    margin-bottom: 2.5rem;
+  }
+  .sg-head h2 {
+    margin: 0.5rem 0 0.75rem;
+  }
+  .sg-intro {
+    color: var(--c-text-muted, #b2b8b3);
+    margin: 0;
+    font-size: 0.95rem;
+    max-width: 800px;
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .step-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 10px;
+    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .step-num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--c-lime, #c8f14d);
+    line-height: 1;
+    font-family: monospace;
+    opacity: 0.8;
+  }
+  .step-card h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .step-card p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .step-card a {
+    color: var(--c-lime, #c8f14d);
+  }
+  .step-card code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  .step-tip {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  }
+
+  /* Troubleshooting Section */
+  .trouble-box {
+    background: linear-gradient(180deg, #161816 0%, #121312 100%);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+  @media (max-width: 600px) {
+    .trouble-box {
+      padding: 1.25rem;
+    }
+  }
+  .tb-head {
+    margin-bottom: 2rem;
+  }
+  .tb-head h3 {
+    margin: 0.5rem 0 0;
+  }
+  .tb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .tb-item {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .tb-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--c-text, #e8ece9);
+    font-size: 1rem;
+    user-select: none;
+    list-style: none;
+  }
+  .tb-q::-webkit-details-marker {
+    display: none;
+  }
+  .tb-a {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .tb-a p {
+    margin: 0;
+    color: var(--c-text-muted, #b2b8b3);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .tb-a strong {
+    color: var(--c-lime, #c8f14d);
+  }
+</style>
+
+<script>
+  // Platform Tabs Switcher
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.platform-tabs .p-tab');
+  const cards = document.querySelectorAll<HTMLElement>('.client-card');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        t.classList.remove('is-active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+
+      const targetPlatform = tab.dataset.platform;
+
+      cards.forEach((card) => {
+        const p = card.dataset.platform;
+        if (targetPlatform === p) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Trigger initial filter for active tab
+  const activeTab = document.querySelector<HTMLButtonElement>('.platform-tabs .p-tab.is-active');
+  if (activeTab) {
+    const p = activeTab.dataset.platform;
+    cards.forEach((c) => {
+      c.style.display = c.dataset.platform === p ? 'flex' : 'none';
+    });
+  }
+</script>

@@ -1,0 +1,1213 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import Button from '~/components/Button.astro';
+import { brands } from '~/data/brands';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+// Filter only the measured brands with real speedtest images
+const measuredBrands = brands
+  .filter((b) => Boolean(b.speedImage))
+  .sort((a, b) => a.rank - b.rank);
+
+const guangsu = brands.find((b) => b.id === 'guangsu') || measuredBrands[0];
+
+const pageUrl = `${siteConfig.url}/speedtest/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '实测测速榜与解锁矩阵', url: pageUrl },
+  ]),
+  {
+    '@type': 'ItemList',
+    name: '2026 梯子机场真机晚高峰测速榜与流媒体/ChatGPT解锁矩阵',
+    description: '公开 17 家主流机场真实晚高峰测速大图与 Netflix、Disney+、ChatGPT、Claude 解锁审计结果。',
+    numberOfItems: measuredBrands.length,
+    itemListElement: measuredBrands.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `${b.name} 测速实测`,
+      url: `${siteConfig.url}/brands/${b.id}/`,
+    })),
+  },
+]);
+---
+
+<PageLayout
+  title="17家机场真机测速榜 — 2026晚高峰节点带宽、延迟与流媒体/ChatGPT解锁矩阵 — 梯子Blog"
+  heading="17家机场真机晚高峰测速榜"
+  eyebrow="Real-world Speedtest & Unlock Matrix"
+  intro="拒绝虚构宣称，全部数据基于千兆宽带与 MAI-TEST-BOT 在晚高峰时段（20:00-23:00）真实并发压测。包含 17 家主流专线高清测速图、延迟抖动与流媒体/AI 解锁能力全景透视。"
+  description="2026 梯子机场实测测速大榜：汇聚光速云、暮光加速、飞猫云等 17 家服务商晚高峰下载速率、丢包率实测大图，并提供 Netflix 4K、Disney+、ChatGPT 及 Claude 解锁全景对照表。"
+  crumbs={[{ label: '实测测速榜' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Test Environment Observatory Banner -->
+    <div class="env-banner rev">
+      <div class="env-header">
+        <span class="dot-live" aria-hidden="true"></span>
+        <span class="env-title">网络可观测实验室 · 晚高峰实测基准说明</span>
+      </div>
+      <div class="env-grid">
+        <div class="env-item">
+          <span class="env-lbl">测试网络环境</span>
+          <strong class="env-val">中国电信 / 中国联通 1000M FTTH</strong>
+        </div>
+        <div class="env-item">
+          <span class="env-lbl">测试内核工具</span>
+          <strong class="env-val">MAI-TEST-BOT 多线程并发压测</strong>
+        </div>
+        <div class="env-item">
+          <span class="env-lbl">测试采样时段</span>
+          <strong class="env-val">晚间黄金高峰期（20:00 - 23:00）</strong>
+        </div>
+        <div class="env-item">
+          <span class="env-lbl">解锁审计覆盖</span>
+          <strong class="env-val">Netflix 4K · Disney+ · ChatGPT · Claude</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spotlight: 光速云 #1 Main Promotion Card -->
+    {guangsu && (
+      <div class="spotlight-card rev rev-d1" id="spotlight">
+        <div class="spotlight-top">
+          <div class="spotlight-badge">
+            <Icon name="spark" class="ic-xs" />
+            <span>观测站第一主推 · 综合实力霸榜</span>
+          </div>
+          <span class="spotlight-tag">稳定运营超 4 年 · 双线路架构</span>
+        </div>
+
+        <div class="spotlight-body">
+          <div class="spotlight-info">
+            <h2 class="spotlight-title">
+              <a href="/brands/guangsu/">{guangsu.name}</a>
+              <span class="rank-pill">#1 TOP PICK</span>
+            </h2>
+            <p class="spotlight-desc">
+              采用企业级 IEPL 专线与双线路智能冗余架构，单节点吞吐高达 2.5Gbps。实测晚高峰香港、日本、新加坡节点百兆以上跑满，4K/8K 视频拖拽秒开。提供独家自研客户端与罕见的永久不过期不限时包。
+            </p>
+
+            <div class="spotlight-kpis">
+              <div class="skpi">
+                <span class="skpi-lbl">起步门槛</span>
+                <span class="skpi-val accent">¥9.9/月</span>
+                <span class="skpi-sub">年付折合约 ¥8/月</span>
+              </div>
+              <div class="skpi">
+                <span class="skpi-lbl">永久不限时包</span>
+                <span class="skpi-val">¥147</span>
+                <span class="skpi-sub">247GB 永久不过期</span>
+              </div>
+              <div class="skpi">
+                <span class="skpi-lbl">独家专属优惠</span>
+                <span class="skpi-val coupon-code" id="couponCode">AMM</span>
+                <button type="button" class="coupon-copy-btn" id="copyCouponBtn" title="点击复制优惠码">
+                  <Icon name="spark" class="ic-xs" /> 复制优惠码
+                </button>
+              </div>
+            </div>
+
+            <div class="spotlight-unlocks">
+              <span class="ul-label">解锁评级：</span>
+              <span class="ul-pill ok"><Icon name="check" class="ic-xxs" /> Netflix 4K 原生</span>
+              <span class="ul-pill ok"><Icon name="check" class="ic-xxs" /> Disney+</span>
+              <span class="ul-pill ok"><Icon name="check" class="ic-xxs" /> ChatGPT 4o</span>
+              <span class="ul-pill ok"><Icon name="check" class="ic-xxs" /> Claude 3.5</span>
+            </div>
+
+            <div class="spotlight-actions">
+              <a href={guangsu.affUrl} target="_blank" rel="nofollow sponsored noopener" class="btn btn-lime">
+                <span>前往光速云官网直达</span>
+                <Icon name="arrow" class="ic-sm" />
+              </a>
+              <Button href="/brands/guangsu/" variant="outline">查看光速云深度评测与多张实测图</Button>
+            </div>
+          </div>
+
+          <div class="spotlight-visual">
+            <div class="img-frame" data-full-src={guangsu.speedImage}>
+              <img
+                src={guangsu.speedImage}
+                alt={`${guangsu.name} 晚高峰真实节点测速大图`}
+                loading="eager"
+                decoding="async"
+                class="speed-preview-img"
+              />
+              <div class="zoom-overlay">
+                <Icon name="chart" class="ic-sm" />
+                <span>点击查看高清测速原图</span>
+              </div>
+            </div>
+            {guangsu.unlockImages && guangsu.unlockImages.length > 0 && (
+              <div class="unlock-strip">
+                <span class="strip-lbl">流媒体与 AI 解锁实机截屏：</span>
+                <div class="unlock-thumbs">
+                  {guangsu.unlockImages.slice(0, 3).map((img, idx) => (
+                    <div class="thumb-frame" data-full-src={img}>
+                      <img src={img} alt={`光速云流媒体与ChatGPT解锁实测截屏 ${idx + 1}`} loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- Filter Bar for Speedtest Cards -->
+    <div class="speed-filter-bar rev rev-d1">
+      <div class="filter-headline">
+        <h3 class="filter-title">17 家真机测速图展台</h3>
+        <p class="filter-count">当前展示全部 {measuredBrands.length} 家实测机场</p>
+      </div>
+
+      <div class="filter-chips" role="group" aria-label="测速图筛选">
+        <button class="chip is-active" data-filter="all">全部实测 (17)</button>
+        <button class="chip" data-filter="iepl">IEPL/IPLC 专线</button>
+        <button class="chip" data-filter="client">提供自研客户端</button>
+        <button class="chip" data-filter="chatgpt">ChatGPT 原生全解</button>
+      </div>
+    </div>
+
+    <!-- Speedtest Cards Grid -->
+    <div class="speed-cards-grid" id="speedGrid">
+      {
+        measuredBrands.map((brand) => (
+          <article
+            class="speed-card rev"
+            data-id={brand.id}
+            data-iepl={brand.lineType.some((t) => /IEPL|IPLC/i.test(t)) ? 'true' : 'false'}
+            data-client={brand.hasCustomClient ? 'true' : 'false'}
+            data-chatgpt={brand.unlocks.chatgpt === 'supported' ? 'true' : 'false'}
+          >
+            <!-- Card Header -->
+            <div class="sc-head">
+              <div class="sc-head-left">
+                <span class="sc-rank">#{brand.rank}</span>
+                <h4 class="sc-name">
+                  <a href={`/brands/${brand.id}/`}>{brand.name}</a>
+                </h4>
+              </div>
+              <div class="sc-head-right">
+                <span class="sc-price">{brand.pricingMin}</span>
+              </div>
+            </div>
+
+            <!-- Line Badges -->
+            <div class="sc-badges">
+              {brand.lineType.map((lt) => (
+                <span class:list={['line-badge', /IEPL|IPLC/i.test(lt) ? 'is-iepl' : '']}>{lt}</span>
+              ))}
+              {brand.hasCustomClient && <span class="client-badge">自研客户端</span>}
+              {brand.discountCode && <span class="coupon-pill">券码: {brand.discountCode}</span>}
+            </div>
+
+            <!-- Image Thumbnail -->
+            <div class="sc-img-wrap" data-full-src={brand.speedImage}>
+              <img
+                src={brand.speedImage}
+                alt={`${brand.name} 2026晚高峰真机测速图`}
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="sc-img-hover">
+                <Icon name="chart" class="ic-sm" />
+                <span>查看高清测速图</span>
+              </div>
+            </div>
+
+            <!-- Speed KPI Highlights -->
+            {brand.speedTable && brand.speedTable.length > 0 && (
+              <div class="sc-kpis">
+                <div class="sc-kpi-item">
+                  <span class="kpi-node">{brand.speedTable[0]?.node || '首选节点'}</span>
+                  <span class="kpi-speed">{brand.speedTable[0]?.download || '100+ Mbps'}</span>
+                  <span class="kpi-ping">{brand.speedTable[0]?.latency || '低延迟'}</span>
+                </div>
+              </div>
+            )}
+
+            <!-- Unlock Row -->
+            <div class="sc-unlock-row">
+              <div class="ul-badge">
+                <span class="ul-name">Netflix</span>
+                <span class:list={['ul-dot', brand.unlocks.netflix === 'supported' ? 'ok' : 'cond']}></span>
+              </div>
+              <div class="ul-badge">
+                <span class="ul-name">Disney+</span>
+                <span class:list={['ul-dot', brand.unlocks.disney === 'supported' ? 'ok' : 'cond']}></span>
+              </div>
+              <div class="ul-badge">
+                <span class="ul-name">ChatGPT</span>
+                <span class:list={['ul-dot', brand.unlocks.chatgpt === 'supported' ? 'ok' : 'cond']}></span>
+              </div>
+              <div class="ul-badge">
+                <span class="ul-name">Claude</span>
+                <span class:list={['ul-dot', brand.unlocks.claude === 'supported' ? 'ok' : 'cond']}></span>
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="sc-actions">
+              <a href={`/brands/${brand.id}/`} class="btn btn-outline btn-sm">查看详评</a>
+              <a
+                href={brand.affUrl}
+                target="_blank"
+                rel="nofollow sponsored noopener"
+                class="btn btn-lime btn-sm"
+              >
+                <span>直达官网</span>
+                <Icon name="arrow" class="ic-xs" />
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- Streaming & AI Unlock Full Comparison Table -->
+    <div class="sec-box rev rev-d1" id="unlock-matrix">
+      <div class="sec-box-head">
+        <p class="eyebrow">All-in-one Matrix</p>
+        <h3 class="d3">17 家实测机场流媒体与 AI 工具解锁全景对照表</h3>
+        <p class="sec-box-lead">
+          所有结果均基于实际节点访问审计。绿色代表原生全量支持，黄色代表特定节点支持（请在客户端选择标有解锁后缀的节点），灰色代表暂不支持。
+        </p>
+      </div>
+
+      <div class="table-wrap">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>排名 / 品牌</th>
+              <th>线路类型</th>
+              <th>起步月费</th>
+              <th>Netflix 4K</th>
+              <th>Disney+</th>
+              <th>ChatGPT</th>
+              <th>Claude</th>
+              <th>TikTok</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              measuredBrands.map((b) => (
+                <tr>
+                  <td class="brand-cell">
+                    <span class="table-rank">#{b.rank}</span>
+                    <a href={`/brands/${b.id}/`} class="brand-name-link">
+                      <strong>{b.name}</strong>
+                    </a>
+                  </td>
+                  <td>
+                    <span class="line-tag-sm">{b.lineType[0] || '专线/中转'}</span>
+                  </td>
+                  <td class="price-cell">{b.pricingMin}</td>
+                  <td>
+                    <span class:list={['status-tag', b.unlocks.netflix === 'supported' ? 'is-ok' : 'is-cond']}>
+                      {b.unlocks.netflix === 'supported' ? '原生 4K' : '部分节点'}
+                    </span>
+                  </td>
+                  <td>
+                    <span class:list={['status-tag', b.unlocks.disney === 'supported' ? 'is-ok' : 'is-cond']}>
+                      {b.unlocks.disney === 'supported' ? '支持' : '部分节点'}
+                    </span>
+                  </td>
+                  <td>
+                    <span class:list={['status-tag', b.unlocks.chatgpt === 'supported' ? 'is-ok' : 'is-cond']}>
+                      {b.unlocks.chatgpt === 'supported' ? '原生全解' : '按节点'}
+                    </span>
+                  </td>
+                  <td>
+                    <span class:list={['status-tag', b.unlocks.claude === 'supported' ? 'is-ok' : 'is-cond']}>
+                      {b.unlocks.claude === 'supported' ? '支持' : '按节点'}
+                    </span>
+                  </td>
+                  <td>
+                    <span class:list={['status-tag', b.unlocks.tiktok === 'supported' ? 'is-ok' : 'is-cond']}>
+                      {b.unlocks.tiktok === 'supported' ? '解锁' : '部分'}
+                    </span>
+                  </td>
+                  <td>
+                    <a href={b.affUrl} target="_blank" rel="nofollow sponsored noopener" class="table-link">
+                      官网直达 →
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Speedtest Interpretation Guide & FAQ -->
+    <div class="guide-box rev rev-d2">
+      <div class="guide-box-head">
+        <p class="eyebrow">Observatory Science</p>
+        <h3 class="d3">如何科学看懂机场测速图？避开四大认知陷阱</h3>
+      </div>
+
+      <div class="guide-items">
+        <div class="g-item">
+          <h4>陷阱一：只看峰值带宽，忽视晚高峰丢包与延迟抖动</h4>
+          <p>
+            很多测速图在凌晨或闲时跑出 800Mbps，但一到晚上 20:30~22:30 便频繁断流。日常 4K 流畅播放仅需 30~50Mbps 纯净带宽，真正决定体验的是 <strong>零丢包率</strong> 与 <strong>稳定的 TLS 握手延迟</strong>。专线（IEPL/IPLC）的价值正是在高峰期保持极低抖动。
+          </p>
+        </div>
+
+        <div class="g-item">
+          <h4>陷阱二：以为“测速跑得快”就等于“ChatGPT 不报错”</h4>
+          <p>
+            测速反映的是数据传输带宽，而 ChatGPT、Claude 与 Netflix 审查的是落地机房 IP 的信誉库与欺诈度（Fraud Score）。如果机房 IP 被万人共用甚至曾被爬虫滥用，无论 1000M 还是 100M 都会触发 403 阻断或无限验证码。选型时务必参考流媒体与 AI 解锁审计结果。
+          </p>
+        </div>
+
+        <div class="g-item">
+          <h4>陷阱三：忽略本地运营商与入口网关的物理匹配度</h4>
+          <p>
+            同一种专线在不同地区用户手中的体验存在差异。例如中国电信通常在华东、华南入口互联较佳，中国联通在北方入口延迟更低，而中国移动由于国际出口带宽大但内网穿透规则多变，需优先选择具备 BGP 移动专线接入的机场。
+          </p>
+        </div>
+
+        <div class="g-item">
+          <h4>陷阱四：盲目买下大额三年付，遭遇跑路或维护降级</h4>
+          <p>
+            任何优质网络链路均需要持续高昂的物理带宽成本维系。凡是“低至几十元买终身”、“超低价三年付”往往伴随着严重超售或链路跑路风险。梯子Blog 始终建议：<strong>首次使用优先月付或季度付</strong>，体验良好再续期。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal for High-Res Speedtest Images -->
+  <dialog id="imgDialog" class="img-modal">
+    <div class="modal-inner">
+      <button type="button" class="modal-close" id="modalCloseBtn" aria-label="关闭原图">
+        <Icon name="close" class="ic-md" />
+      </button>
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="高清测速原图放大预览" />
+      </div>
+      <p class="modal-caption" id="modalCaption"></p>
+    </div>
+  </dialog>
+</PageLayout>
+
+<style>
+  /* --- Environment Banner --- */
+  .env-banner {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .env-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+  .env-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-text, #e8ece9);
+    letter-spacing: 0.02em;
+  }
+  .env-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+  .env-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .env-lbl {
+    font-size: 0.8rem;
+    color: var(--c-text-dim, #8b928c);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .env-val {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--c-lime, #c8f14d);
+  }
+
+  /* --- Spotlight #1 Guangsu Card --- */
+  .spotlight-card {
+    background: linear-gradient(145deg, #181c16 0%, #121312 100%);
+    border: 1.5px solid var(--c-lime, #c8f14d);
+    border-radius: 16px;
+    padding: 2.25rem;
+    margin-bottom: 3.5rem;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(200, 241, 77, 0.08);
+  }
+  .spotlight-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(200, 241, 77, 0.2);
+    padding-bottom: 1rem;
+  }
+  .spotlight-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+  }
+  .spotlight-tag {
+    font-size: 0.85rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .spotlight-body {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .spotlight-body {
+      grid-template-columns: 1fr;
+    }
+  }
+  .spotlight-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 0 1rem;
+    font-size: 2rem;
+  }
+  .spotlight-title a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .spotlight-title a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .rank-pill {
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid var(--c-lime, #c8f14d);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+  .spotlight-desc {
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .spotlight-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    .spotlight-kpis {
+      grid-template-columns: 1fr;
+    }
+  }
+  .skpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .skpi-lbl {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .skpi-val {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--c-text, #e8ece9);
+  }
+  .skpi-val.accent {
+    color: var(--c-lime, #c8f14d);
+  }
+  .skpi-val.coupon-code {
+    font-family: monospace;
+    color: #ffd700;
+    letter-spacing: 0.1em;
+  }
+  .skpi-sub {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .coupon-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 0.25rem;
+    width: fit-content;
+    transition: all 0.2s;
+  }
+  .coupon-copy-btn:hover {
+    background: #ffd700;
+    color: #101110;
+  }
+  .spotlight-unlocks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .ul-label {
+    font-size: 0.85rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .ul-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--c-border, #242524);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .ul-pill.ok {
+    background: rgba(200, 241, 77, 0.1);
+    border-color: rgba(200, 241, 77, 0.3);
+    color: var(--c-lime, #c8f14d);
+  }
+  .spotlight-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Spotlight Visual */
+  .spotlight-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .img-frame {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--c-border, #242524);
+    background: #000;
+    cursor: zoom-in;
+  }
+  .img-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .img-frame:hover img {
+    transform: scale(1.02);
+  }
+  .zoom-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 17, 16, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .img-frame:hover .zoom-overlay {
+    opacity: 1;
+  }
+  .unlock-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .strip-lbl {
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .unlock-thumbs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .thumb-frame {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--c-border, #242524);
+    height: 70px;
+    cursor: zoom-in;
+    background: #000;
+  }
+  .thumb-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s;
+  }
+  .thumb-frame:hover img {
+    transform: scale(1.08);
+  }
+
+  /* --- Speed Filter Bar --- */
+  .speed-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--c-border, #242524);
+  }
+  .filter-headline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .filter-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .filter-count {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .filter-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    color: var(--c-text-muted, #b2b8b3);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    color: var(--c-text, #e8ece9);
+  }
+  .chip.is-active {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+    border-color: var(--c-lime, #c8f14d);
+    font-weight: 600;
+  }
+
+  /* --- Speed Cards Grid --- */
+  .speed-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 4rem;
+  }
+  @media (max-width: 480px) {
+    .speed-cards-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .speed-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .speed-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .sc-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sc-head-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .sc-rank {
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-dim, #8b928c);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+  .sc-name {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .sc-name a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .sc-name a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .sc-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+  }
+  .sc-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .line-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--c-border, #242524);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .line-badge.is-iepl {
+    background: rgba(200, 241, 77, 0.1);
+    border-color: rgba(200, 241, 77, 0.25);
+    color: var(--c-lime, #c8f14d);
+  }
+  .client-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(64, 150, 255, 0.1);
+    border: 1px solid rgba(64, 150, 255, 0.25);
+    color: #69b1ff;
+  }
+  .coupon-pill {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    color: #ffd700;
+    font-family: monospace;
+  }
+  .sc-img-wrap {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 180px;
+    background: #000;
+    border: 1px solid var(--c-border, #242524);
+    cursor: zoom-in;
+  }
+  .sc-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.2s;
+  }
+  .sc-img-wrap:hover img {
+    transform: scale(1.04);
+  }
+  .sc-img-hover {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 17, 16, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .sc-img-wrap:hover .sc-img-hover {
+    opacity: 1;
+  }
+  .sc-kpis {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+  }
+  .sc-kpi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+  .kpi-node {
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .kpi-speed {
+    color: var(--c-lime, #c8f14d);
+    font-weight: 700;
+  }
+  .kpi-ping {
+    color: var(--c-text-dim, #8b928c);
+    font-size: 0.8rem;
+  }
+  .sc-unlock-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 0.5rem;
+  }
+  .ul-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .ul-name {
+    font-size: 0.7rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .ul-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .ul-dot.ok {
+    background: var(--c-lime, #c8f14d);
+    box-shadow: 0 0 6px rgba(200, 241, 77, 0.6);
+  }
+  .ul-dot.cond {
+    background: #faad14;
+    box-shadow: 0 0 6px rgba(250, 173, 20, 0.6);
+  }
+  .sc-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+
+  /* --- Matrix Comparison Table Section --- */
+  .sec-box {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-bottom: 4rem;
+  }
+  @media (max-width: 600px) {
+    .sec-box {
+      padding: 1.25rem;
+    }
+  }
+  .sec-box-head {
+    margin-bottom: 2rem;
+  }
+  .sec-box-head .eyebrow {
+    margin-bottom: 0.5rem;
+  }
+  .sec-box-head h3 {
+    margin: 0 0 0.75rem;
+  }
+  .sec-box-lead {
+    color: var(--c-text-muted, #b2b8b3);
+    margin: 0;
+    font-size: 0.95rem;
+    max-width: 760px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .matrix-table th {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    font-size: 0.8rem;
+    color: var(--c-text-dim, #8b928c);
+    border-bottom: 1px solid var(--c-border, #242524);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .matrix-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    vertical-align: middle;
+  }
+  .matrix-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .brand-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .table-rank {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--c-text-dim, #8b928c);
+    width: 24px;
+  }
+  .brand-name-link {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .brand-name-link:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .line-tag-sm {
+    font-size: 0.75rem;
+    color: var(--c-text-muted, #b2b8b3);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+  .price-cell {
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+  }
+  .status-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .status-tag.is-ok {
+    background: rgba(200, 241, 77, 0.15);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid rgba(200, 241, 77, 0.3);
+  }
+  .status-tag.is-cond {
+    background: rgba(250, 173, 20, 0.15);
+    color: #faad14;
+    border: 1px solid rgba(250, 173, 20, 0.3);
+  }
+  .table-link {
+    color: var(--c-lime, #c8f14d);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .table-link:hover {
+    text-decoration: underline;
+  }
+
+  /* --- Guide Box --- */
+  .guide-box {
+    background: linear-gradient(180deg, #161816 0%, #121312 100%);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .guide-box-head {
+    margin-bottom: 2rem;
+  }
+  .guide-box-head h3 {
+    margin: 0.5rem 0 0;
+  }
+  .guide-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  .g-item h4 {
+    color: var(--c-text, #e8ece9);
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+  .g-item p {
+    color: var(--c-text-muted, #b2b8b3);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .g-item strong {
+    color: var(--c-lime, #c8f14d);
+  }
+
+  /* --- Lightbox Dialog --- */
+  .img-modal {
+    background: rgba(16, 17, 16, 0.92);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    color: #fff;
+    backdrop-filter: blur(10px);
+  }
+  .img-modal::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+  }
+  .modal-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .modal-close {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    z-index: 10;
+  }
+  .modal-close:hover {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+  }
+  .modal-img-wrap {
+    max-width: 85vw;
+    max-height: 75vh;
+    overflow: auto;
+  }
+  .modal-img-wrap img {
+    max-width: 100%;
+    max-height: 75vh;
+    display: block;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .modal-caption {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+  }
+</style>
+
+<script>
+  // Coupon Copy functionality
+  const copyBtn = document.getElementById('copyCouponBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText('AMM');
+        const origText = copyBtn.innerHTML;
+        copyBtn.innerHTML = '已复制优惠码 AMM！';
+        setTimeout(() => {
+          copyBtn.innerHTML = origText;
+        }, 2500);
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+    });
+  }
+
+  // Speed Cards Filter
+  const chips = document.querySelectorAll<HTMLButtonElement>('.filter-chips .chip');
+  const cards = document.querySelectorAll<HTMLElement>('.speed-card');
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      chips.forEach((c) => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+
+      const filter = chip.dataset.filter || 'all';
+
+      cards.forEach((card) => {
+        let show = true;
+        if (filter === 'iepl') {
+          show = card.dataset.iepl === 'true';
+        } else if (filter === 'client') {
+          show = card.dataset.client === 'true';
+        } else if (filter === 'chatgpt') {
+          show = card.dataset.chatgpt === 'true';
+        }
+
+        card.style.display = show ? 'flex' : 'none';
+      });
+    });
+  });
+
+  // Lightbox Modal for Images
+  const dialog = document.getElementById('imgDialog') as HTMLDialogElement | null;
+  const modalImg = document.getElementById('modalImg') as HTMLImageElement | null;
+  const modalCaption = document.getElementById('modalCaption');
+  const closeBtn = document.getElementById('modalCloseBtn');
+
+  if (dialog && modalImg) {
+    document.querySelectorAll<HTMLElement>('[data-full-src]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const src = el.dataset.fullSrc;
+        const img = el.querySelector('img');
+        const alt = img ? img.alt : '实测高清大图';
+        if (src) {
+          modalImg.src = src;
+          if (modalCaption) modalCaption.textContent = alt;
+          dialog.showModal();
+        }
+      });
+    });
+
+    closeBtn?.addEventListener('click', () => {
+      dialog.close();
+    });
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) {
+        dialog.close();
+      }
+    });
+  }
+</script>

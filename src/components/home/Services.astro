@@ -1,0 +1,224 @@
+---
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHeading from '../SectionHeading.astro';
+import { servicesHeading } from '~/data/highlights';
+import { brands } from '~/data/brands';
+
+const topBrands = brands
+  .filter((b) => b.rank <= 10)
+  .sort((a, b) => a.rank - b.rank);
+---
+
+<section class="wrap sec sec-top" id="top10" aria-labelledby="top10-h">
+  <SectionHeading
+    class="rev"
+    eyebrow={servicesHeading.eyebrow}
+    title={servicesHeading.title}
+    id="top10-h"
+  >
+    <Button href={servicesHeading.ctaHref} variant="outline">{servicesHeading.ctaLabel}</Button>
+  </SectionHeading>
+
+  <div class="top10-grid">
+    {
+      topBrands.map((brand, i) => (
+        <article
+          class:list={[
+            'top-brand-card',
+            'rev',
+            i % 3 > 0 && `rev-d${i % 3}`,
+            brand.isMainPromo && 'is-main-promo',
+          ]}
+        >
+          <div class="tbc-head">
+            <div class="tbc-title-box">
+              <span class:list={['tbc-rank', brand.rank === 1 ? 'gold' : brand.rank <= 3 ? 'lime' : '']}>
+                #{brand.rank}
+              </span>
+              <h3 class="tbc-name">
+                <a href={`/brands/${brand.id}/`}>{brand.name}</a>
+              </h3>
+            </div>
+            <span class="tbc-price">{brand.pricingMin}</span>
+          </div>
+
+          <p class="tbc-summary">{brand.summary}</p>
+
+          <div class="tbc-features">
+            <div class="tbc-lines">
+              {brand.lineType.map((lt) => (
+                <span class:list={['line-tag', /IEPL|IPLC/i.test(lt) ? 'is-iepl' : '']}>{lt}</span>
+              ))}
+              {brand.hasCustomClient && <span class="client-tag">自研一键端</span>}
+              {brand.speedImage && <span class="speed-tag">有测速图</span>}
+            </div>
+
+            <div class="tbc-unlocks">
+              <span class="unlock-item">
+                Netflix <strong class={brand.unlocks.netflix === 'supported' ? 'ok' : 'cond'}>●</strong>
+              </span>
+              <span class="unlock-item">
+                ChatGPT <strong class={brand.unlocks.chatgpt === 'supported' ? 'ok' : 'cond'}>●</strong>
+              </span>
+              <span class="unlock-item">
+                Claude <strong class={brand.unlocks.claude === 'supported' ? 'ok' : 'cond'}>●</strong>
+              </span>
+            </div>
+          </div>
+
+          <div class="tbc-actions">
+            <a href={`/brands/${brand.id}/`} class="btn btn-outline btn-sm">查看评测报告</a>
+            <a
+              href={brand.affUrl}
+              target="_blank"
+              rel="nofollow sponsored noopener"
+              class:list={['btn', 'btn-sm', brand.isMainPromo ? 'btn-lime' : 'btn-outline-ink']}
+            >
+              <span>官网直达</span>
+              <Icon name="arrow" class="ic-xs" />
+            </a>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .top10-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.75rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 480px) {
+    .top10-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .top-brand-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .top-brand-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .top-brand-card.is-main-promo {
+    border-color: var(--c-lime, #c8f14d);
+    background: linear-gradient(150deg, #181d16 0%, #131413 100%);
+    box-shadow: 0 4px 25px rgba(200, 241, 77, 0.08);
+  }
+  .tbc-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tbc-title-box {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .tbc-rank {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-dim, #8b928c);
+  }
+  .tbc-rank.gold {
+    background: #ffd700;
+    color: #101110;
+  }
+  .tbc-rank.lime {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+  }
+  .tbc-name {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+  .tbc-name a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .tbc-name a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .tbc-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+  }
+  .tbc-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .tbc-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    padding: 0.85rem;
+  }
+  .tbc-lines {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .line-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .line-tag.is-iepl {
+    background: rgba(200, 241, 77, 0.12);
+    color: var(--c-lime, #c8f14d);
+    border: 1px solid rgba(200, 241, 77, 0.25);
+  }
+  .client-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(64, 150, 255, 0.12);
+    color: #69b1ff;
+  }
+  .speed-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(82, 196, 26, 0.12);
+    color: #52c41a;
+  }
+  .tbc-unlocks {
+    display: flex;
+    gap: 0.85rem;
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .unlock-item strong.ok {
+    color: var(--c-lime, #c8f14d);
+  }
+  .unlock-item strong.cond {
+    color: #faad14;
+  }
+  .tbc-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+</style>

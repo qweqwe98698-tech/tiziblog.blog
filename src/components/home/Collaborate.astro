@@ -1,0 +1,141 @@
+---
+import Icon from '../Icon.astro';
+import Button from '../Button.astro';
+import { collaborate } from '~/data/highlights';
+import { brands } from '~/data/brands';
+
+const guangsu = brands.find((b) => b.id === 'guangsu');
+---
+
+<section class="wrap sec" aria-labelledby="collab-h">
+  <div class="collab-grid">
+    <div class="collab-visual rev">
+      <div class="mocks">
+        {
+          collaborate.images.map((img, i) => (
+            <div class:list={['mock', i === 0 ? 'mock-a' : 'mock-b']}>
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ))
+        }
+      </div>
+      <span class="collab-badge">{collaborate.badge}</span>
+    </div>
+
+    <div class="collab-copy rev rev-d1">
+      <p class="eyebrow">{collaborate.eyebrow}</p>
+      <h2 class="d3 collab-h" id="collab-h"><b>{collaborate.title}</b></h2>
+      <p class="collab-sub">{collaborate.body}</p>
+
+      <!-- 光速云高转化关键指标卡片 -->
+      <div class="collab-panel">
+        <div class="cbox promo-box">
+          <i><Icon name="spark" /></i>
+          <span>
+            <span class="cbox-lbl">独家专属优惠码</span>
+            <span class="cbox-val coupon-text" id="homeCouponVal">AMM</span>
+          </span>
+          <button type="button" class="btn-copy-sm" id="homeCopyBtn" title="点击复制优惠码">复制</button>
+        </div>
+
+        <div class="cbox">
+          <i><Icon name="device" /></i>
+          <span>
+            <span class="cbox-lbl">客户端生态</span>
+            <span class="cbox-val">自研一键客户端 (Win/Mac/安卓)</span>
+          </span>
+        </div>
+
+        <div class="cbox">
+          <i><Icon name="layers" /></i>
+          <span>
+            <span class="cbox-lbl">核心线路架构</span>
+            <span class="cbox-val">IEPL 企业专线 · 双线路冗余</span>
+          </span>
+        </div>
+
+        <div class="cbox">
+          <i><Icon name="flag" /></i>
+          <span>
+            <span class="cbox-lbl">不限时永久包</span>
+            <span class="cbox-val">¥147 (247GB 永久不过期)</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="collab-actions">
+        {guangsu && (
+          <a
+            href={guangsu.affUrl}
+            target="_blank"
+            rel="nofollow sponsored noopener"
+            class="btn btn-lime"
+          >
+            <span>直达光速云官网开启加速</span>
+            <Icon name="arrow" class="ic-sm" />
+          </a>
+        )}
+        <Button href={collaborate.ctaHref} variant="outline">{collaborate.ctaLabel}</Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .collab-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .promo-box {
+    border-color: rgba(255, 215, 0, 0.4) !important;
+    background: rgba(255, 215, 0, 0.05);
+  }
+  .coupon-text {
+    font-family: monospace;
+    color: #ffd700 !important;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+  .btn-copy-sm {
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    color: #ffd700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.2s;
+  }
+  .btn-copy-sm:hover {
+    background: #ffd700;
+    color: #101110;
+  }
+</style>
+
+<script>
+  const copyBtn = document.getElementById('homeCopyBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText('AMM');
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = '已复制!';
+        setTimeout(() => {
+          copyBtn.textContent = orig;
+        }, 2000);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+</script>

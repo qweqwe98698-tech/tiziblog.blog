@@ -1,0 +1,30 @@
+{
+  "name": "tiziblog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TiziBlog — 现代独立博客与数字作品集，基于 Astro 7 极速静态构建与全栈 SEO 架构。",
+  "license": "MIT",
+  "homepage": "https://tiziblog.blog",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev --ignore-lock",
+    "start": "astro dev --ignore-lock",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "sync": "astro sync",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
+  }
+}

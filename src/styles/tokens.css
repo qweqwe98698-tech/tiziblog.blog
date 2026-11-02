@@ -1,0 +1,49 @@
+/* ============================================================
+   TiziBlog | Design tokens
+   ============================================================ */
+:root {
+  /* Brand palette */
+  --theme-accent: #c8f14d;
+  --theme-accent-hover: #b2df33;
+  --theme-ink: #101110;
+  --theme-graphite: #2b2c2a;
+  --theme-slate: #6c7068;
+  --theme-mist: #f2f3ef;
+  --theme-line: #e3e5de;
+  --theme-faint: #8c9280;
+  --theme-shell: #ffffff;
+  --theme-live: #3fa34d;
+
+  /* Legacy aliases */
+  --swp-lime: var(--theme-accent);
+  --swp-lime-deep: var(--theme-accent-hover);
+  --swp-ink: var(--theme-ink);
+  --swp-graphite: var(--theme-graphite);
+  --swp-slate: var(--theme-slate);
+  --swp-mist: var(--theme-mist);
+  --swp-line: var(--theme-line);
+  --swp-faint: var(--theme-faint);
+  --swp-shell: var(--theme-shell);
+  --swp-live: var(--theme-live);
+
+  /* Typography */
+  --font-display: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Layout */
+  --pad: clamp(20px, calc((100vw - 1320px) / 2), 300px);
+  --shell: 1920px;
+
+  /* Radii */
+  --r-sm: 10px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-pill: 999px;
+
+  /* Rhythm */
+  --sec: clamp(64px, 7vw, 110px);
+  --sec-tight: clamp(44px, 5vw, 72px);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}

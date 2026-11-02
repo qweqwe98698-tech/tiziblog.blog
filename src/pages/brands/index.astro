@@ -1,0 +1,339 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import BrandCard from '~/components/cards/BrandCard.astro';
+import { brands } from '~/data/brands';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const measuredCount = brands.filter((b) => b.speedImage).length;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '42家机场品牌库', url: `${siteConfig.url}/brands/` },
+  ]),
+  {
+    '@type': 'ItemList',
+    name: '2026 全球网络加速与专线机场品牌测评库',
+    description: '42家主流机场品牌实测、17家真机晚高峰测速与流媒体解锁监控大全。',
+    numberOfItems: brands.length,
+    itemListElement: brands.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      url: `${siteConfig.url}/brands/${b.id}/`,
+    })),
+  },
+]);
+---
+
+<PageLayout
+  title="42家机场品牌库 — 2026梯子专线测速与流媒体解锁全景评测"
+  heading="42家机场品牌全景观测库"
+  eyebrow="Observatory Directory"
+  intro="收录全网 42 家主流机场品牌，沉淀 17 家真机晚高峰测速图与流媒体/ChatGPT 解锁状态。拒绝虚构吹捧，坚持数据驱动，为您提供清晰客观的选型决策参考。"
+  description="2026 梯子与机场品牌全景评测库：光速云、暮光加速、飞猫云等 42 家主流服务商深度横评，包含真实带宽测速、套餐价格表、解锁矩阵与避坑建议。"
+  crumbs={[{ label: '42家机场品牌库' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Observatory Dashboard Stats -->
+    <div class="dir-stats rev">
+      <div class="dir-stat-item">
+        <span class="dnum">42</span>
+        <span class="dlbl">全量收录服务商</span>
+      </div>
+      <div class="dir-stat-item">
+        <span class="dnum accent">{measuredCount}</span>
+        <span class="dlbl">包含真机测速图</span>
+      </div>
+      <div class="dir-stat-item">
+        <span class="dnum">100%</span>
+        <span class="dlbl">客观真实无编造</span>
+      </div>
+      <div class="dir-stat-item">
+        <span class="dnum">2026-10</span>
+        <span class="dlbl">最近测速核验期</span>
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="filter-panel rev rev-d1" id="filterPanel">
+      <div class="search-box">
+        <input
+          type="search"
+          id="brandSearch"
+          placeholder="搜索品牌名称（如：光速云、飞猫、专线、VLESS）..."
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="filter-chips" role="group" aria-label="筛选维度">
+        <button class="chip is-active" data-filter="all">全部 (42)</button>
+        <button class="chip" data-filter="measured">包含真机测速 ({measuredCount})</button>
+        <button class="chip" data-filter="customClient">自研一键客户端</button>
+        <button class="chip" data-filter="iepl">IEPL/IPLC专线</button>
+        <button class="chip" data-filter="budget">性价比入门 (≤10元/月)</button>
+      </div>
+    </div>
+
+    <p class="results-count sr-only" role="status" id="resultsCount">展示全部 42 家机场品牌</p>
+
+    <!-- Brands Grid -->
+    <div class="brands-grid" id="brandsGrid">
+      {
+        brands.map((brand) => (
+          <div
+            class="brand-grid-item"
+            data-id={brand.id}
+            data-name={brand.name.toLowerCase()}
+            data-summary={brand.summary.toLowerCase()}
+            data-measured={brand.speedImage ? 'true' : 'false'}
+            data-custom-client={brand.hasCustomClient ? 'true' : 'false'}
+            data-iepl={brand.lineType.some((t) => /IEPL|IPLC/i.test(t)) ? 'true' : 'false'}
+            data-budget={
+              brand.pricingMin.includes('8') ||
+              brand.pricingMin.includes('7') ||
+              brand.pricingMin.includes('5.6') ||
+              brand.pricingMin.includes('6')
+                ? 'true'
+                : 'false'
+            }
+          >
+            <BrandCard brand={brand} />
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display:none">
+      <p class="empty-title">未找到匹配的机场品牌</p>
+      <p class="empty-desc">尝试更换关键词，或者点击“全部”重置筛选条件。</p>
+      <button class="btn btn-outline" id="resetBtn">重置所有筛选</button>
+    </div>
+
+    <!-- Transparency Disclosure -->
+    <div class="transparency-card rev" style="margin-top:clamp(40px,5vw,70px)">
+      <h4>🛡️ 梯子Blog 评测与可观测性声明</h4>
+      <p>
+        本站所有品牌测速与解锁数据均来自实际网络环境测试与品牌公开资料真实归纳。没有可靠实测依据的数据字段一律标记为“待核实”，严禁虚构测速结果。页面包含赞助推广链接，推广收益将全部用于补充测试服务器与带宽资源，不影响您的最终购买价格。
+      </p>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .dir-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .dir-stat-item {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dnum {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--theme-ink);
+  }
+
+  .dnum.accent {
+    color: #3b7b13;
+  }
+
+  .dlbl {
+    font-size: 13.5px;
+    color: var(--theme-slate);
+    font-weight: 500;
+  }
+
+  .filter-panel {
+    background: #ffffff;
+    border: 1px solid var(--theme-line);
+    border-radius: var(--r-md);
+    padding: 20px;
+    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 12px 18px;
+    border: 1.5px solid var(--theme-line);
+    border-radius: var(--r-sm);
+    font-size: 15px;
+    background: var(--theme-mist);
+    transition: border-color 0.15s;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--theme-ink);
+    background: #ffffff;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    background: var(--theme-mist);
+    border: 1px solid var(--theme-line);
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--theme-slate);
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+  }
+
+  .chip:hover {
+    color: var(--theme-ink);
+    border-color: var(--theme-ink);
+  }
+
+  .chip.is-active {
+    background: var(--theme-ink);
+    color: #ffffff;
+    border-color: var(--theme-ink);
+  }
+
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .brands-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--theme-mist);
+    border-radius: var(--r-md);
+    border: 1px dashed var(--theme-line);
+    margin: 20px 0;
+  }
+
+  .empty-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--theme-ink);
+    margin: 0 0 8px;
+  }
+
+  .empty-desc {
+    color: var(--theme-slate);
+    font-size: 14.5px;
+    margin: 0 0 20px;
+  }
+
+  .transparency-card {
+    background: var(--theme-mist);
+    border-left: 4px solid var(--theme-accent);
+    padding: 24px 28px;
+    border-radius: 0 var(--r-md) var(--r-md) 0;
+  }
+
+  .transparency-card h4 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--theme-ink);
+  }
+
+  .transparency-card p {
+    margin: 0;
+    font-size: 13.8px;
+    color: var(--theme-slate);
+    line-height: 1.65;
+  }
+</style>
+
+<script>
+  const searchInput = document.getElementById('brandSearch') as HTMLInputElement | null;
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('.brand-grid-item');
+  const emptyState = document.getElementById('emptyState');
+  const resetBtn = document.getElementById('resetBtn');
+
+  let currentFilter = 'all';
+  let searchQuery = '';
+
+  function applyFilters() {
+    let visibleCount = 0;
+
+    items.forEach((item) => {
+      const name = item.dataset.name || '';
+      const summary = item.dataset.summary || '';
+      const isMeasured = item.dataset.measured === 'true';
+      const isCustomClient = item.dataset.customClient === 'true';
+      const isIepl = item.dataset.iepl === 'true';
+      const isBudget = item.dataset.budget === 'true';
+
+      // Text search
+      const matchesSearch =
+        !searchQuery || name.includes(searchQuery) || summary.includes(searchQuery);
+
+      // Category chip
+      let matchesCategory = true;
+      if (currentFilter === 'measured') matchesCategory = isMeasured;
+      else if (currentFilter === 'customClient') matchesCategory = isCustomClient;
+      else if (currentFilter === 'iepl') matchesCategory = isIepl;
+      else if (currentFilter === 'budget') matchesCategory = isBudget;
+
+      const isVisible = matchesSearch && matchesCategory;
+      item.style.display = isVisible ? '' : 'none';
+      if (isVisible) visibleCount++;
+    });
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  }
+
+  searchInput?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      chips.forEach((c) => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      currentFilter = chip.dataset.filter || 'all';
+      applyFilters();
+    });
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    searchQuery = '';
+    chips.forEach((c) => c.classList.remove('is-active'));
+    chips[0]?.classList.add('is-active');
+    currentFilter = 'all';
+    applyFilters();
+  });
+</script>
