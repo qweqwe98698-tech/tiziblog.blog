@@ -225,8 +225,32 @@ const speedtestShowcase = brands
   .sc-cta-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    gap: 0.75rem;
     margin-top: auto;
+  }
+  .sc-cta-row .btn {
+    width: 100%;
+    justify-content: center;
+    border-radius: 999px;
+  }
+  .sc-cta-row .btn-outline {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28) !important;
+    font-weight: 600;
+  }
+  .sc-cta-row .btn-outline:hover {
+    background: rgba(200, 241, 77, 0.16) !important;
+    color: var(--c-lime, #c8f14d) !important;
+    box-shadow: inset 0 0 0 1.5px var(--c-lime, #c8f14d) !important;
+  }
+  .sc-cta-row .btn-lime {
+    background: var(--c-lime, #c8f14d) !important;
+    color: #101110 !important;
+    font-weight: 700;
+  }
+  .sc-cta-row .btn-lime:hover {
+    background: #d8f56e !important;
   }
   .showcase-foot {
     margin-top: 2.5rem;
