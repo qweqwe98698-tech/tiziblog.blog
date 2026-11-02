@@ -1,0 +1,353 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/clash/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: 'Clash配置教程', url: pageUrl },
+  ]),
+  {
+    '@type': 'HowTo',
+    name: '2026 Clash Verge Rev 订阅导入与 TUN 模式配置极速实操',
+    description: '指导 Windows 与 macOS 用户如何下载安装 Clash Verge Rev，导入机场订阅，开启 TUN 虚拟网卡接管系统流量与规则分流。',
+    step: [
+      {
+        '@type': 'HowToStep',
+        position: 1,
+        name: '下载安装最新版 Clash Verge Rev',
+        text: '访问官方 GitHub Release 页面下载对应系统的安装包（Windows 选 x64-setup.exe，Mac 选 arm64.dmg），完成安装。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 2,
+        name: '获取并导入机场订阅链接',
+        text: '在机场后台复制订阅 URL，打开客户端 Profiles 界面粘贴，点击 Download 下载配置文件。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 3,
+        name: '开启 TUN 模式与服务模式',
+        text: '在 Settings 中安装 Service Mode（服务模式），打开 TUN Mode 开关，确保接管全部 UDP 游戏与非系统代理流量。',
+      },
+      {
+        '@type': 'HowToStep',
+        position: 4,
+        name: '选择节点并开启规则分流',
+        text: '在 Proxies 界面选择 Rule 模式，根据需求选择延迟较低的香港或日本节点，开启 System Proxy。',
+      },
+    ],
+  },
+]);
+---
+
+<PageLayout
+  title="Clash配置教程 — Clash Verge Rev 下载、订阅导入与TUN模式分流指南 — 梯子Blog"
+  heading="Clash / Clash Verge 客户端配置与分流实操"
+  eyebrow="Clash Setup & Rule Configuration"
+  intro="自 Clash 核心作者停更以来，基于 Mihomo (Clash Meta) 内核的开源神器 Clash Verge Rev 成为跨平台首选。手把手指导您完成订阅导入、TUN 虚拟网卡接管、DNS 防污染与分流进阶设置。"
+  description="2026 Clash Verge Rev 最新教程：开源客户端下载、机场通用订阅导入、TUN 模式虚拟网卡配置、防止 DNS 泄漏及端口 7890 冲突报错全流程排查指南。"
+  crumbs={[{ label: 'Clash教程' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Quick Notice Banner for Novices -->
+    <div class="clash-notice rev">
+      <div class="cn-left">
+        <Icon name="spark" class="ic-md accent" />
+        <div>
+          <strong class="cn-title">觉得 Clash 订阅转换和 TUN 配置太繁琐？</strong>
+          <p class="cn-desc">
+            如果您仅需稳定翻墙、查阅资料或看流媒体，推荐直接选择提供<strong>自研免配置一键登录客户端</strong>的专线品牌（如<strong>光速云</strong>与<strong>飞猫云</strong>），下载登录即用，彻底告别订阅更新与报错。
+          </p>
+        </div>
+      </div>
+      <div class="cn-right">
+        <a href="/brands/guangsu/" class="btn btn-lime btn-sm">查看光速云自研客户端</a>
+      </div>
+    </div>
+
+    <!-- 4-Step Setup Roadmap -->
+    <div class="clash-steps rev rev-d1">
+      <h2 class="vt-sec-h">Clash Verge Rev 四步极速配置法</h2>
+      <div class="cs-grid">
+        <div class="cs-card">
+          <div class="cs-num">01</div>
+          <h3>安装最新版客户端</h3>
+          <p>
+            认准官方开源仓库 <code>clash-verge-rev/clash-verge-rev</code>。Windows 用户下载 <code>x64-setup.exe</code>，macOS 苹果芯片选 <code>arm64.dmg</code>。
+          </p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-num">02</div>
+          <h3>导入机场订阅配置</h3>
+          <p>
+            进入左侧 <strong>Profiles (订阅/配置)</strong>，在上方输入框粘贴机场提供的 <code>Clash 订阅链接</code>，点击 <strong>Import / Download</strong>。
+          </p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-num">03</div>
+          <h3>启用 TUN 模式</h3>
+          <p>
+            进入 <strong>Settings (设置)</strong>，先点击 Service Mode 旁边的 <strong>Install</strong> 安装核心驱动，随后开启 <strong>TUN Mode (虚拟网卡)</strong>。
+          </p>
+        </div>
+        <div class="cs-card">
+          <div class="cs-num">04</div>
+          <h3>选择节点与规则分流</h3>
+          <p>
+            在 <strong>Proxies (代理)</strong> 选项卡选择 <strong>Rule (规则分流)</strong> 模式，测速后选择延迟 &lt; 50ms 的专线节点，即可安全流畅联网。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- YAML Snippet Example -->
+    <div class="clash-yaml-box rev rev-d2">
+      <h2 class="vt-sec-h">核心 DNS 与 TUN 配置优化示例 (YAML)</h2>
+      <p class="cy-desc">通过在扩展脚本（Merge/Script）中注入以下代码，可杜绝 DNS 污染并大幅降低海外网页建立连接的耗时：</p>
+      <pre class="yaml-code"><code># Clash Meta / Verge Rev DNS 防污染标准配置
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - 223.5.5.5           # 阿里国内快速 DNS
+    - 119.29.29.29         # 腾讯国内快速 DNS
+  fallback:
+    - https://1.1.1.1/dns-query     # Cloudflare 安全加密 DNS
+    - https://8.8.8.8/dns-query     # Google 安全加密 DNS
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack:
+    - "any:53"
+  auto-route: true
+  auto-detect-interface: true</code></pre>
+    </div>
+
+    <!-- Troubleshooting FAQ -->
+    <div class="clash-faq rev">
+      <h2 class="vt-sec-h">常见报错与故障紧急排查</h2>
+      <div class="cf-grid">
+        <div class="cf-item">
+          <strong>问：打开系统代理后，微信 QQ 正常，但 Google / YouTube 打不开？</strong>
+          <p>答：检查系统时间是否精准到秒。TLS 握手对时钟误差极其敏感，若时差超过 90 秒将直接拒绝连接。同步 Windows / Mac 互联网时间后即可解决。</p>
+        </div>
+        <div class="cf-item">
+          <strong>问：TUN 模式开启失败，提示 “Service Mode Not Installed”？</strong>
+          <p>答：Windows 需要在以管理员权限运行客户端后，在设置里点击 Service Mode 的 Install；macOS 需要在系统设置授予网络扩展权限。</p>
+        </div>
+        <div class="cf-item">
+          <strong>问：提示 “Port 7890 already in use” 端口被占用？</strong>
+          <p>答：说明有旧版 Clash、v2rayN 或其他代理软件在后台未完全退出。在任务管理器彻底结束残留进程，或在设置中将端口改为 7895 即可。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Links Cluster -->
+    <div class="clash-crosslinks rev">
+      <h2 class="vt-sec-h">相关专题与客户端指南</h2>
+      <div class="cx-grid">
+        <a href="/clients/" class="cx-card">
+          <Icon name="device" class="ic-sm accent" />
+          <strong>全平台客户端配置中心</strong>
+          <span>iOS小火箭、安卓v2rayNG与软路由教程</span>
+        </a>
+        <a href="/jichang/" class="cx-card">
+          <Icon name="grid" class="ic-sm accent" />
+          <strong>优质机场推荐排行榜</strong>
+          <span>42 家品牌晚高峰测速与分级评测</span>
+        </a>
+        <a href="/tutorial/" class="cx-card">
+          <Icon name="code" class="ic-sm accent" />
+          <strong>科学上网全景手册</strong>
+          <span>新手小白从入门到精通四步通关路线</span>
+        </a>
+        <a href="/free/" class="cx-card">
+          <Icon name="spark" class="ic-sm accent" />
+          <strong>免费公益节点大全</strong>
+          <span>应急救急与 Cloudflare Workers 免费自建</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .clash-notice {
+    background: linear-gradient(135deg, #181d16 0%, #121312 100%);
+    border: 1px solid rgba(200, 241, 77, 0.3);
+    border-radius: 14px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .cn-left {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    max-width: 750px;
+  }
+  .cn-title {
+    color: var(--c-lime, #c8f14d);
+    font-size: 1.05rem;
+  }
+  .cn-desc {
+    margin: 0.35rem 0 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .vt-sec-h {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+  }
+  .clash-steps {
+    margin-bottom: 2.5rem;
+  }
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .cs-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .cs-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .cs-num {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .cs-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.15rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .cs-card p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .cs-card code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .clash-yaml-box {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .cy-desc {
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    margin-bottom: 1rem;
+  }
+  .yaml-code {
+    background: #0d0e0d;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #d4d4d4;
+  }
+  .clash-faq {
+    margin-bottom: 2.5rem;
+  }
+  .cf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .cf-item {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .cf-item strong {
+    display: block;
+    color: var(--c-lime, #c8f14d);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .cf-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .clash-crosslinks {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+  .cx-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+  .cx-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .cx-card:hover {
+    border-color: var(--c-lime, #c8f14d);
+    transform: translateY(-2px);
+  }
+  .cx-card strong {
+    color: var(--c-text, #e8ece9);
+    font-size: 1rem;
+  }
+  .cx-card span {
+    font-size: 0.82rem;
+    color: var(--c-text-muted, #b2b8b3);
+  }
+</style>

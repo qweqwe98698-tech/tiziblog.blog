@@ -45,6 +45,11 @@ const ogImage = image.startsWith('http') ? image : absoluteUrl(image, Astro.site
 <meta name="description" content={description} />
 {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={href} />}
 
+{siteConfig.verification?.google && <meta name="google-site-verification" content={siteConfig.verification.google} />}
+{siteConfig.verification?.bing && <meta name="msvalidate.01" content={siteConfig.verification.bing} />}
+{siteConfig.verification?.shenma && <meta name="shenma-site-verification" content={siteConfig.verification.shenma} />}
+{siteConfig.verification?.baidu && <meta name="baidu-site-verification" content={siteConfig.verification.baidu} />}
+
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={siteConfig.name} />
 <meta property="og:title" content={fullTitle} />

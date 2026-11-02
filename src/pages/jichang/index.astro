@@ -1,0 +1,333 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import { brands } from '~/data/brands';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/jichang/`;
+
+const topBrands = brands.filter((b) => b.rank <= 12).sort((a, b) => a.rank - b.rank);
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '机场推荐与排行榜', url: pageUrl },
+  ]),
+  {
+    '@type': 'CollectionPage',
+    name: '2026 优质稳定机场推荐与分级评测专栏 — 梯子Blog',
+    description: '梯子Blog 实测 42 家主流机场品牌，甄选 2026 高性价比专线机场排行榜，提供晚高峰测速、流媒体4K与ChatGPT解锁实况。',
+    url: pageUrl,
+  },
+]);
+---
+
+<PageLayout
+  title="机场推荐2026 — 优质稳定IEPL专线机场排行榜与防跑路选购指南 — 梯子Blog"
+  heading="2026 优质稳定机场推荐与分级测评"
+  eyebrow="Airport Directory & Evaluation Matrix"
+  intro="面对市面上上百家杂乱的机场服务商，如何避开超卖跑路坑？梯子Blog 评测实验室基于 1000M FTTH 宽带晚高峰真机压测与双向链路丢包监测，为您梳理 2026 梯队分级推荐榜单。"
+  description="2026 机场推荐排行榜：深度评测 42 家主流机场与专线服务商，严选晚高峰不卡顿、支持 ChatGPT/Netflix 4K 解锁、提供自研免配置客户端与坚持月付机制的高分品牌。"
+  crumbs={[{ label: '机场推荐' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Golden Principles Callout -->
+    <div class="jc-tips rev">
+      <div class="jt-head">
+        <Icon name="spark" class="ic-sm accent" />
+        <h2 class="jt-title">2026 机场选购防坑三大黄金铁律</h2>
+      </div>
+      <div class="jt-grid">
+        <div class="jt-item">
+          <strong>1. 绝不买三年付与终身包</strong>
+          <p>机场平均生存周期仅 10~18 个月，低价三年付和终身套餐 95% 以上会在半年内圈钱跑路，强烈建议坚持月付或小额季付。</p>
+        </div>
+        <div class="jt-item">
+          <strong>2. 认准物理专线（IEPL / IPLC）</strong>
+          <p>普通公网直连中转一到敏感时期全线飘红；真内网物理专线不经 GFW 公网出口审查，晚高峰延迟稳定且零丢包。</p>
+        </div>
+        <div class="jt-item">
+          <strong>3. 新手首选自研免配置客户端</strong>
+          <p>不想折腾 Clash 规则转换与端口冲突的用户，优先选配有自研一键登录 App 的专线品牌，开箱即用降低学习成本。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier Filter Tabs Navigation -->
+    <div class="jc-matrix rev rev-d1">
+      <div class="jm-head">
+        <h2 class="vt-sec-h">2026 梯子Blog 实测分级推荐矩阵</h2>
+        <p>所有上榜品牌均经过 30 天以上全天候稳定性探针打卡，拒绝虚假营销与无资质贴牌：</p>
+      </div>
+
+      <div class="jm-grid">
+        {
+          topBrands.map((b) => (
+            <article class:list={['jm-card', b.isMainPromo && 'is-promoted']}>
+              <div class="jmc-header">
+                <div class="jmc-rank-box">
+                  <span class:list={['jmc-rank', b.rank <= 3 ? 'top3' : '']}>#{b.rank}</span>
+                  <h3 class="jmc-name">
+                    <a href={`/brands/${b.id}/`}>{b.name}</a>
+                  </h3>
+                </div>
+                <span class="jmc-price">{b.pricingMin}</span>
+              </div>
+
+              <p class="jmc-summary">{b.summary}</p>
+
+              <div class="jmc-specs">
+                <div class="jmc-lines">
+                  {b.lineType.map((lt) => (
+                    <span class="spec-tag">{lt}</span>
+                  ))}
+                  {b.hasCustomClient && <span class="spec-tag client">自研客户端</span>}
+                  {b.speedImage && <span class="spec-tag speed">晚高峰实测</span>}
+                </div>
+                <div class="jmc-unlocks">
+                  <span>Netflix: <strong>{b.unlocks.netflix === 'supported' ? '原生' : '部分'}</strong></span>
+                  <span>ChatGPT: <strong>{b.unlocks.chatgpt === 'supported' ? '畅连' : '受限'}</strong></span>
+                </div>
+              </div>
+
+              <div class="jmc-actions">
+                <a href={`/brands/${b.id}/`} class="btn btn-outline btn-sm">查看评测报告</a>
+                <a href={b.affUrl} target="_blank" rel="nofollow sponsored noopener" class="btn btn-lime btn-sm">
+                  <span>官网直达</span>
+                  <Icon name="arrow" class="ic-xs" />
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Cluster Links -->
+    <div class="jc-foot-nav rev rev-d2">
+      <h2 class="vt-sec-h">深入了解更多专栏</h2>
+      <div class="jfn-grid">
+        <a href="/speedtest/" class="jfn-card">
+          <strong>晚高峰真机测速大图</strong>
+          <span>17 家主流专线千兆带宽实时跑满验证</span>
+        </a>
+        <a href="/warnings/" class="jfn-card">
+          <strong>跑路预警与黑名单库</strong>
+          <span>及时避开失联跑路与二次贴牌克隆站</span>
+        </a>
+        <a href="/clients/" class="jfn-card">
+          <strong>客户端订阅配置中心</strong>
+          <span>Clash Verge / 小火箭 / v2rayNG 下载配置</span>
+        </a>
+        <a href="/free/" class="jfn-card">
+          <strong>应急免费公益节点</strong>
+          <span>零成本救急翻墙资源与自建节点代码</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .jc-tips {
+    background: rgba(200, 241, 77, 0.08);
+    border: 1.5px solid rgba(200, 241, 77, 0.3);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .jt-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+  .jt-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .jt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+  .jt-item {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .jt-item strong {
+    display: block;
+    color: var(--c-lime, #c8f14d);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+  .jt-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .vt-sec-h {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem;
+  }
+  .jm-head p {
+    color: var(--c-text-muted, #b2b8b3);
+    margin-bottom: 2rem;
+  }
+  .jm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 3rem;
+  }
+  .jm-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .jm-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .jm-card.is-promoted {
+    border-color: var(--c-lime, #c8f14d);
+    background: linear-gradient(150deg, #181d16 0%, #131413 100%);
+    box-shadow: 0 4px 25px rgba(200, 241, 77, 0.08);
+  }
+  .jmc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .jmc-rank-box {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .jmc-rank {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-dim, #8b928c);
+  }
+  .jmc-rank.top3 {
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+  }
+  .jmc-name {
+    margin: 0;
+    font-size: 1.3rem;
+  }
+  .jmc-name a {
+    color: var(--c-text, #e8ece9);
+    text-decoration: none;
+  }
+  .jmc-name a:hover {
+    color: var(--c-lime, #c8f14d);
+  }
+  .jmc-price {
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+  }
+  .jmc-summary {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .jmc-specs {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .jmc-lines {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .spec-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .spec-tag.client {
+    background: rgba(64, 150, 255, 0.12);
+    color: #69b1ff;
+  }
+  .spec-tag.speed {
+    background: rgba(82, 196, 26, 0.12);
+    color: #52c41a;
+  }
+  .jmc-unlocks {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--c-text-dim, #8b928c);
+  }
+  .jmc-unlocks strong {
+    color: var(--c-lime, #c8f14d);
+  }
+  .jmc-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+  .jc-foot-nav {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+  .jfn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .jfn-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .jfn-card:hover {
+    border-color: var(--c-lime, #c8f14d);
+    transform: translateY(-2px);
+  }
+  .jfn-card strong {
+    color: var(--c-text, #e8ece9);
+    font-size: 1rem;
+  }
+  .jfn-card span {
+    font-size: 0.82rem;
+    color: var(--c-text-muted, #b2b8b3);
+  }
+</style>

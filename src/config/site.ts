@@ -37,6 +37,13 @@ export const siteConfig: SiteConfig = {
     '专注于全球网络加速链路与专线机场可观测性评测。坚持真机测速、拒绝虚构宣传，为用户提供清晰透明的网络选型参考与避坑建议。',
 
   copyrightHolder: '梯子Blog (tiziblog.blog)',
+
+  verification: {
+    google: import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION ?? '',
+    bing: import.meta.env.PUBLIC_BING_SITE_VERIFICATION ?? '',
+    shenma: import.meta.env.PUBLIC_SHENMA_SITE_VERIFICATION ?? '',
+    baidu: import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION ?? '',
+  },
 };
 
 export default siteConfig;

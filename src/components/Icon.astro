@@ -12,11 +12,21 @@ interface Props extends Omit<HTMLAttributes<'svg'>, 'viewBox'> {
 const { name, label, class: className, ...rest } = Astro.props;
 const viewBox = name === 'logo' ? '0 0 32 32' : '0 0 24 24';
 const classes = ['ic', className].filter(Boolean).join(' ');
+
+// Derive explicit default pixel dimensions to prevent flexbox SVG inflation
+let defaultSize = 20;
+if (className?.includes('ic-xxs')) defaultSize = 12;
+else if (className?.includes('ic-xs')) defaultSize = 14;
+else if (className?.includes('ic-sm')) defaultSize = 16;
+else if (className?.includes('ic-md')) defaultSize = 20;
+else if (className?.includes('ic-lg')) defaultSize = 26;
 ---
 
 <svg
   class={classes}
   viewBox={viewBox}
+  width={rest.width ?? defaultSize}
+  height={rest.height ?? defaultSize}
   role={label ? 'img' : undefined}
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}

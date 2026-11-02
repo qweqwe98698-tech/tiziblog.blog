@@ -226,26 +226,32 @@ const topBrands = brands
     justify-content: center;
     border-radius: 999px;
   }
-  .tbc-actions .btn-outline {
-    background: rgba(255, 255, 255, 0.08) !important;
+  .tbc-actions .btn-outline,
+  .tbc-actions .btn-outline:visited {
+    background: rgba(255, 255, 255, 0.12) !important;
     color: #ffffff !important;
-    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28) !important;
+    -webkit-text-fill-color: #ffffff !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4) !important;
     font-weight: 600;
   }
   .tbc-actions .btn-outline:hover {
-    background: rgba(200, 241, 77, 0.16) !important;
+    background: rgba(200, 241, 77, 0.2) !important;
     color: var(--c-lime, #c8f14d) !important;
+    -webkit-text-fill-color: var(--c-lime, #c8f14d) !important;
     box-shadow: inset 0 0 0 1.5px var(--c-lime, #c8f14d) !important;
   }
-  .tbc-actions .btn-outline-ink {
-    background: rgba(200, 241, 77, 0.12) !important;
+  .tbc-actions .btn-outline-ink,
+  .tbc-actions .btn-outline-ink:visited {
+    background: rgba(200, 241, 77, 0.14) !important;
     color: var(--c-lime, #c8f14d) !important;
-    box-shadow: inset 0 0 0 1.5px rgba(200, 241, 77, 0.45) !important;
+    -webkit-text-fill-color: var(--c-lime, #c8f14d) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(200, 241, 77, 0.5) !important;
     font-weight: 600;
   }
   .tbc-actions .btn-outline-ink:hover {
     background: var(--c-lime, #c8f14d) !important;
     color: #101110 !important;
+    -webkit-text-fill-color: #101110 !important;
     box-shadow: inset 0 0 0 1.5px var(--c-lime, #c8f14d) !important;
   }
 </style>

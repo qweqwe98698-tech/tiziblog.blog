@@ -1,0 +1,375 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/nodes/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '全球节点与测速监控', url: pageUrl },
+  ]),
+  {
+    '@type': 'CollectionPage',
+    name: '全球跨境专线节点选路与晚高峰延迟观测指南 — 梯子Blog',
+    description: '深入分析香港、日本、新加坡、美西等全球主流机房落地物理路由、晚高峰丢包率与 IP 纯净度检测方法。',
+    url: pageUrl,
+  },
+]);
+---
+
+<PageLayout
+  title="节点选择与测速监控 — 全球跨境专线节点延迟、丢包率与IP纯净度指南 — 梯子Blog"
+  heading="全球跨境节点选路与晚高峰网络观测"
+  eyebrow="Global Node Observability"
+  intro="为什么有些节点看 YouTube 很快，但打开 ChatGPT 却频繁跳 Access Denied？不同落地机房的 IP 纯净度、ASN 权重与物理往返时延（RTT）存在天壤之别。本文为您拆解如何科学选路与避坑。"
+  description="2026 全球代理翻墙节点选路手册：香港、日本、新加坡、美西四大核心地区线路特性对比、晚高峰真实丢包率、IP欺诈度检测与流媒体解锁匹配建议。"
+  crumbs={[{ label: '节点测速监控' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- Key Regional Analysis Cards -->
+    <div class="nodes-regions rev">
+      <h2 class="vt-sec-h">四大核心落地地区线路物理特性与选型场景</h2>
+      <div class="nr-grid">
+        <div class="nr-card">
+          <div class="nr-head">
+            <span class="nr-flag">🇭🇰 中国香港 (HK)</span>
+            <span class="nr-rtt">&lt; 35ms 极低延迟</span>
+          </div>
+          <p class="nr-desc">
+            内陆物理距离最近，IEPL 专线可做到 15~35ms 往返时延。适合网页秒开、日常办公与低延迟游戏。但需注意香港地区被 OpenAI、Disney+ 等服务严格拉黑，不支持 ChatGPT 免翻直连。
+          </p>
+          <div class="nr-tags">
+            <span>适用：极速浏览 / 网页秒开</span>
+            <span>注意：不支持 ChatGPT</span>
+          </div>
+        </div>
+
+        <div class="nr-card">
+          <div class="nr-head">
+            <span class="nr-flag">🇯🇵 日本东京/大阪 (JP)</span>
+            <span class="nr-rtt">45 ~ 65ms 均衡主力</span>
+          </div>
+          <p class="nr-desc">
+            亚太地区最全能的落地节点。完美支持 ChatGPT、Claude、Netflix 4K 日区生肉动漫与 Pixiv。专线晚高峰丢包率通常低于 0.2%，是绝大多数开发者和追剧党的主力首选。
+          </p>
+          <div class="nr-tags">
+            <span>适用：ChatGPT / 4K追剧 / 开发者</span>
+            <span>优势：生态最成熟</span>
+          </div>
+        </div>
+
+        <div class="nr-card">
+          <div class="nr-head">
+            <span class="nr-flag">🇸🇬 新加坡 (SG)</span>
+            <span class="nr-rtt">55 ~ 75ms 纯净首选</span>
+          </div>
+          <p class="nr-desc">
+            东南亚枢纽，IP 风控极其宽松。ChatGPT、Claude 3.5 Sonnet 与各大 AI 生产力平台几乎不跳人机验证；流媒体覆盖东南亚全区片源。专线配合下极其稳固。
+          </p>
+          <div class="nr-tags">
+            <span>适用：AI高频调用 / 独立开发</span>
+            <span>优势：IP纯净度极高</span>
+          </div>
+        </div>
+
+        <div class="nr-card">
+          <div class="nr-head">
+            <span class="nr-flag">🇺🇸 美国西海岸 (US)</span>
+            <span class="nr-rtt">130 ~ 170ms 全功能兜底</span>
+          </div>
+          <p class="nr-desc">
+            虽有太平洋物理时延（约 150ms），但美国节点具有全球最完整的内容库（Netflix 美区专属片库、Spotify、Reddit 等）。适合大文件下载、后台长任务与非时延敏感场景。
+          </p>
+          <div class="nr-tags">
+            <span>适用：全库影音 / 大吞吐下载</span>
+            <span>优势：资源库最完整</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics Matrix Table -->
+    <div class="nodes-table-card rev rev-d1">
+      <h2 class="vt-sec-h">实验室真机测速：节点类型与实测指标对比</h2>
+      <div class="table-scroll">
+        <table class="nodes-table">
+          <thead>
+            <tr>
+              <th>节点类型</th>
+              <th>骨干路由架构</th>
+              <th>晚高峰平均延迟</th>
+              <th>晚高峰丢包率</th>
+              <th>IP 欺诈度评分</th>
+              <th>推荐用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>IEPL 双线内网香港</strong></td>
+              <td>深港 / 沪港 物理专线</td>
+              <td><span class="badge-good">22ms</span></td>
+              <td><span class="badge-good">&lt; 0.2%</span></td>
+              <td><span class="badge-good">0 ~ 15 (优质)</span></td>
+              <td>办公 / 网页极速加载</td>
+            </tr>
+            <tr>
+              <td><strong>IPLC 点对点日本</strong></td>
+              <td>京沪-东京 物理专线</td>
+              <td><span class="badge-good">52ms</span></td>
+              <td><span class="badge-good">&lt; 0.3%</span></td>
+              <td><span class="badge-good">5 ~ 20 (原生)</span></td>
+              <td>ChatGPT / 4K 追剧主力</td>
+            </tr>
+            <tr>
+              <td><strong>优质中转新加坡</strong></td>
+              <td>BGP 智能中转出口</td>
+              <td><span class="badge-mid">68ms</span></td>
+              <td><span class="badge-mid">1.2%</span></td>
+              <td><span class="badge-good">0 ~ 10 (极纯)</span></td>
+              <td>AI 研发 / Claude 3.5</td>
+            </tr>
+            <tr>
+              <td><strong>公网直连美西</strong></td>
+              <td>普通 163 / CN2 直连</td>
+              <td><span class="badge-bad">210ms</span></td>
+              <td><span class="badge-bad">&gt; 18%</span></td>
+              <td><span class="badge-bad">&gt; 65 (高风控)</span></td>
+              <td>大文件下载 / 容灾备用</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- IP Reputation & Fraud Score Guide -->
+    <div class="nodes-ip-guide rev rev-d2">
+      <h2 class="vt-sec-h">如何验证节点的 IP 纯净度（防封号与人机验证）</h2>
+      <p class="nip-desc">高风控节点容易导致 OpenAI 封号或 Google 频繁弹出 Cloudflare 5 秒盾。通过以下命令与工具可一键核验：</p>
+      <div class="nip-steps">
+        <div class="nip-item">
+          <strong>1. 检查 IP 欺诈度（Fraud Score）</strong>
+          <p>访问 <code>scamalytics.com</code> 或 <code>ipinfo.io</code>，如果 Fraud Score 高于 50，说明该 IP 被标记为高危机房代理，极易被风控拦截。</p>
+        </div>
+        <div class="nip-item">
+          <strong>2. 验证原生住宅 vs 机房广播</strong>
+          <p>检查 IP 的 ASN 属性。如果 Type 为 <code>ISP / Residential</code>（如 HKT、HKBN、NTT 家宽），则权重最高；若是 <code>Hosting / Data Center</code>（如 OVH、DigitalOcean），则易受限。</p>
+        </div>
+        <div class="nip-item">
+          <strong>3. 终端探测 HTTP 状态码命令</strong>
+          <p>在开启代理的终端执行：<code>curl -I -s https://chatgpt.com/api/auth/session</code>。若返回 <code>HTTP/2 200</code> 或 <code>403 Forbidden (未登录)</code> 为正常；若返回 <code>429 Too Many Requests</code> 或 <code>Access Denied</code> 则代表节点被封禁。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cluster Links -->
+    <div class="nodes-foot-nav rev">
+      <h2 class="vt-sec-h">相关专题与测速报告</h2>
+      <div class="nfn-grid">
+        <a href="/speedtest/" class="nfn-card">
+          <Icon name="chart" class="ic-sm accent" />
+          <strong>17 家机场晚高峰测速大图</strong>
+          <span>千兆 FTTH 测速截图与流媒体解锁观测</span>
+        </a>
+        <a href="/jichang/" class="nfn-card">
+          <Icon name="grid" class="ic-sm accent" />
+          <strong>优质机场分级排行榜</strong>
+          <span>42 家品牌专线配置与月付性价比横评</span>
+        </a>
+        <a href="/clash/" class="nfn-card">
+          <Icon name="code" class="ic-sm accent" />
+          <strong>Clash Verge 测速选路</strong>
+          <span>自动测速优选与延迟分组规则进阶</span>
+        </a>
+        <a href="/free/" class="nfn-card">
+          <Icon name="spark" class="ic-sm accent" />
+          <strong>免费公益节点大全</strong>
+          <span>零成本应急节点测速与测速脚本</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .vt-sec-h {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+  }
+  .nodes-regions {
+    margin-bottom: 2.5rem;
+  }
+  .nr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.5rem;
+  }
+  .nr-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .nr-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .nr-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nr-flag {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .nr-rtt {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+    background: rgba(200, 241, 77, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+  .nr-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .nr-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+  .nr-tags span {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .nodes-table-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .table-scroll {
+    overflow-x: auto;
+  }
+  .nodes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 650px;
+  }
+  .nodes-table th,
+  .nodes-table td {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .nodes-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--c-text-muted, #b2b8b3);
+    font-weight: 600;
+  }
+  .badge-good {
+    color: var(--c-lime, #c8f14d);
+    font-weight: 600;
+  }
+  .badge-mid {
+    color: #faad14;
+  }
+  .badge-bad {
+    color: #ff4d4f;
+  }
+  .nodes-ip-guide {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .nip-desc {
+    font-size: 0.9rem;
+    color: var(--c-text-muted, #b2b8b3);
+    margin-bottom: 1.25rem;
+  }
+  .nip-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+  .nip-item {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .nip-item strong {
+    display: block;
+    color: var(--c-lime, #c8f14d);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .nip-item p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .nip-item code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--c-lime, #c8f14d);
+  }
+  .nodes-foot-nav {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+  .nfn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .nfn-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .nfn-card:hover {
+    border-color: var(--c-lime, #c8f14d);
+    transform: translateY(-2px);
+  }
+  .nfn-card strong {
+    color: var(--c-text, #e8ece9);
+    font-size: 1rem;
+  }
+  .nfn-card span {
+    font-size: 0.82rem;
+    color: var(--c-text-muted, #b2b8b3);
+  }
+</style>

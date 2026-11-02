@@ -68,31 +68,41 @@
 .btn-ink > i { background: var(--swp-lime); color: var(--swp-ink); }
 
 .btn-outline,
-.btn-outline:visited {
-  background: rgba(255, 255, 255, 0.08);
+.btn-outline:visited,
+a.btn-outline,
+a.btn-outline:visited {
+  background: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35) !important;
 }
-.btn-outline > i { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
-.btn-outline:hover {
-  background: rgba(200, 241, 77, 0.15);
+.btn-outline > i { background: rgba(255, 255, 255, 0.16); color: #ffffff; }
+.btn-outline:hover,
+a.btn-outline:hover {
+  background: rgba(200, 241, 77, 0.2) !important;
   color: var(--swp-lime) !important;
-  box-shadow: inset 0 0 0 1.5px var(--swp-lime);
+  -webkit-text-fill-color: var(--swp-lime) !important;
+  box-shadow: inset 0 0 0 1.5px var(--swp-lime) !important;
 }
 .btn-outline:hover > i { background: var(--swp-lime); color: var(--swp-ink); }
 
 /* Outline button modifier */
 .btn-outline-ink,
-.btn-outline-ink:visited {
-  background: rgba(200, 241, 77, 0.12);
+.btn-outline-ink:visited,
+a.btn-outline-ink,
+a.btn-outline-ink:visited {
+  background: rgba(200, 241, 77, 0.14) !important;
   color: var(--swp-lime) !important;
-  box-shadow: inset 0 0 0 1.5px rgba(200, 241, 77, 0.45);
+  -webkit-text-fill-color: var(--swp-lime) !important;
+  box-shadow: inset 0 0 0 1.5px rgba(200, 241, 77, 0.5) !important;
 }
-.btn-outline-ink > i { background: rgba(200, 241, 77, 0.2); color: var(--swp-lime); }
-.btn-outline-ink:hover {
-  background: var(--swp-lime);
-  color: var(--swp-ink);
-  box-shadow: inset 0 0 0 1.5px var(--swp-lime);
+.btn-outline-ink > i { background: rgba(200, 241, 77, 0.25); color: var(--swp-lime); }
+.btn-outline-ink:hover,
+a.btn-outline-ink:hover {
+  background: var(--swp-lime) !important;
+  color: var(--swp-ink) !important;
+  -webkit-text-fill-color: var(--swp-ink) !important;
+  box-shadow: inset 0 0 0 1.5px var(--swp-lime) !important;
 }
 .btn-outline-ink:hover > i { background: var(--swp-ink); color: var(--swp-lime); }
 

@@ -1,0 +1,340 @@
+---
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/Icon.astro';
+import siteConfig from '~/config/site';
+import { graph, breadcrumbSchema, personSchema } from '~/lib/jsonld';
+
+const pageUrl = `${siteConfig.url}/tutorial/`;
+
+const jsonLd = graph([
+  personSchema(siteConfig),
+  breadcrumbSchema([
+    { name: '首页', url: `${siteConfig.url}/` },
+    { name: '科学上网与网络加速教程', url: pageUrl },
+  ]),
+  {
+    '@type': 'CollectionPage',
+    name: '2026 科学上网与网络加速教程手册大全 — 梯子Blog',
+    description: '涵盖 Windows、macOS、iOS（Shadowrocket小火箭）、Android（v2rayNG / Clash）及软路由六大主流平台的全套配置、订阅导入与分流教程。',
+    url: pageUrl,
+  },
+]);
+---
+
+<PageLayout
+  title="科学上网教程大全 — 2026从零基础入门到全平台翻墙配置完整手册 — 梯子Blog"
+  heading="科学上网与网络加速使用教程手册"
+  eyebrow="Comprehensive Knowledge & Setup Manual"
+  intro="不管您是第一次接触科学上网的小白，还是希望进阶配置 TUN 虚拟网卡与透明代理的技术极客，本手册为您规划三条清晰的学习路径，助您彻底搞懂跨境网络连接与分流原理。"
+  description="2026 科学上网教程全景：从零基础小白一键客户端上手，到 Clash Verge Rev、Shadowrocket 小火箭、v2rayNG 通用订阅导入、规则分流与网络排错完整手册。"
+  crumbs={[{ label: '使用教程手册' }]}
+  jsonLd={jsonLd}
+>
+  <section class="wrap sec" style="padding-top:0">
+    <!-- 3 Learning Pathways Grid -->
+    <div class="tut-paths rev">
+      <h2 class="vt-sec-h">为您量身定制的三条配置路线</h2>
+      <div class="tp-grid">
+        <div class="tp-card highlight">
+          <div class="tp-badge">推荐小白 / 省心首选</div>
+          <h3>路线一：自研一键登录客户端（1分钟开箱）</h3>
+          <p class="tp-desc">
+            无需下载任何第三方配置软件，无需转换订阅链接。直接在专线品牌官网下载 Windows、Mac 或手机 App，输入注册账号密码即可一键极速联网。
+          </p>
+          <ul class="tp-feats">
+            <li><Icon name="check" class="ic-xxs" /><span>全中文直观界面，免规则配置</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>专线智能分流，内置更新与客服支持</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>代表服务商：<strong>光速云</strong>、<strong>飞猫云</strong></span></li>
+          </ul>
+          <a href="/brands/guangsu/" class="btn btn-lime btn-sm" style="margin-top:auto">查看光速云自研端评测</a>
+        </div>
+
+        <div class="tp-card">
+          <div class="tp-badge mid">进阶玩家 / 规则分流</div>
+          <h3>路线二：开源通用客户端（灵活掌控）</h3>
+          <p class="tp-desc">
+            使用目前社区最主流的开源工具。通过订阅链接拉取节点列表，可自由定制规则分流（国内直连、海外加速）与 TUN 模式虚拟网卡接管。
+          </p>
+          <ul class="tp-feats">
+            <li><Icon name="check" class="ic-xxs" /><span>电脑端：<strong>Clash Verge Rev</strong> / Clash Nyanpasu</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>苹果 iOS：<strong>Shadowrocket (小火箭)</strong> / Loon</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>安卓系统：<strong>v2rayNG</strong> / Clash Meta for Android</span></li>
+          </ul>
+          <a href="/clash/" class="btn btn-outline btn-sm" style="margin-top:auto">查看 Clash Verge 详细教程</a>
+        </div>
+
+        <div class="tp-card">
+          <div class="tp-badge tech">极客研发 / 全屋加速</div>
+          <h3>路线三：软路由与透明代理（全设备接入）</h3>
+          <p class="tp-desc">
+            在家庭或办公室 OpenWrt 软路由部署 PassWall 或 OpenClash，实现 Apple TV、PS5/Xbox 游戏主机、智能电视等全屋设备无感科学上网。
+          </p>
+          <ul class="tp-feats">
+            <li><Icon name="check" class="ic-xxs" /><span>无需在每台终端单独安装代理软件</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>底层接管 DNS 解析，彻底杜绝 DNS 污染</span></li>
+            <li><Icon name="check" class="ic-xxs" /><span>支持多节点负载均衡与故障自动转移</span></li>
+          </ul>
+          <a href="/clients/" class="btn btn-outline btn-sm" style="margin-top:auto">查看多平台配置中心</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core 4-Step Universal Flowchart -->
+    <div class="tut-flow rev rev-d1">
+      <h2 class="vt-sec-h">通用订阅导入四步法（适用于所有第三方客户端）</h2>
+      <div class="tf-steps">
+        <div class="tf-step">
+          <span class="tfs-idx">Step 1</span>
+          <strong>获取订阅链接</strong>
+          <p>登录您的机场用户中心，在控制台找到“一键订阅”，选择“复制订阅地址”或对应客户端协议链接。</p>
+        </div>
+        <div class="tf-step">
+          <span class="tfs-idx">Step 2</span>
+          <strong>客户端导入配置文件</strong>
+          <p>打开 Clash、小火箭或 v2rayNG，点击“添加配置 / 订阅”，粘贴刚才复制的 URL 并执行下载保存。</p>
+        </div>
+        <div class="tf-step">
+          <span class="tfs-idx">Step 3</span>
+          <strong>节点延迟测速选优</strong>
+          <p>在节点列表点击测试图标，优先选择往返延迟（RTT）低于 50ms 且带有 IEPL 标识的香港或日本节点。</p>
+        </div>
+        <div class="tf-step">
+          <span class="tfs-idx">Step 4</span>
+          <strong>模式选择与系统连接</strong>
+          <p>运行模式务必选 <strong>Rule (规则分流)</strong>，打开“系统代理 / 连接开关”，完成安全出海网络加速。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common Network Troubleshooting -->
+    <div class="tut-trouble rev rev-d2">
+      <h2 class="vt-sec-h">常见科学上网报错与排查清单</h2>
+      <div class="tt-grid">
+        <div class="tt-item">
+          <strong>1. 打开代理后所有网页都打不开（连接超时）？</strong>
+          <p>首先检查客户端是否给予了网络权限；若为 Windows 用户，检查 Internet 选项中的 LAN 代理设置是否残留旧端口；同步系统本地时钟误差。</p>
+        </div>
+        <div class="tt-item">
+          <strong>2. 能看海外网页，但国内微信、网易云音乐变卡或打不开？</strong>
+          <p>说明您的客户端处于 <strong>Global (全局代理)</strong> 模式，导致所有国内流量绕道海外。请将模式切换回 <strong>Rule (规则分流)</strong>。</p>
+        </div>
+        <div class="tt-item">
+          <strong>3. 节点突然全部测速超时（Timeout / 飘红）？</strong>
+          <p>通常是因为订阅链接过期或机场受到防火墙大波段干扰。在客户端右键订阅点击“更新订阅”；若仍超时，联系机场客服检查专线入口维护状态。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cluster Links -->
+    <div class="tut-foot-nav rev">
+      <h2 class="vt-sec-h">相关进阶与避坑专题</h2>
+      <div class="tfn-grid">
+        <a href="/jichang/" class="tfn-card">
+          <Icon name="grid" class="ic-sm accent" />
+          <strong>2026 优质机场排行榜</strong>
+          <span>42 家品牌晚高峰测速与月付选型建议</span>
+        </a>
+        <a href="/clash/" class="tfn-card">
+          <Icon name="code" class="ic-sm accent" />
+          <strong>Clash Verge 实操指南</strong>
+          <span>TUN 模式虚拟网卡与 DNS 防污染进阶</span>
+        </a>
+        <a href="/faq/" class="tfn-card">
+          <Icon name="spark" class="ic-sm accent" />
+          <strong>机场全科技术 FAQ 问答</strong>
+          <span>涵盖协议、延迟、分流与报错深度解答</span>
+        </a>
+        <a href="/warnings/" class="tfn-card">
+          <Icon name="flag" class="ic-sm accent" />
+          <strong>跑路预警与防坑守则</strong>
+          <span>守住钱包，避开低价终身套餐与克隆站</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .vt-sec-h {
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem;
+  }
+  .tut-paths {
+    margin-bottom: 2.5rem;
+  }
+  .tp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 1.75rem;
+  }
+  .tp-card {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .tp-card:hover {
+    border-color: var(--c-border-hi, #3e423f);
+    transform: translateY(-2px);
+  }
+  .tp-card.highlight {
+    border-color: var(--c-lime, #c8f14d);
+    background: linear-gradient(150deg, #181d16 0%, #131413 100%);
+    box-shadow: 0 4px 25px rgba(200, 241, 77, 0.08);
+  }
+  .tp-badge {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: var(--c-lime, #c8f14d);
+    color: #101110;
+  }
+  .tp-badge.mid {
+    background: rgba(64, 150, 255, 0.15);
+    color: #69b1ff;
+  }
+  .tp-badge.tech {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--c-text-muted, #b2b8b3);
+  }
+  .tp-card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--c-text, #e8ece9);
+    line-height: 1.4;
+  }
+  .tp-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .tp-feats {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .tp-feats li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .tp-feats li :global(svg) {
+    color: var(--c-lime, #c8f14d);
+    flex-shrink: 0 !important;
+    margin-top: 4px;
+  }
+  .tp-feats strong {
+    color: var(--c-lime, #c8f14d);
+  }
+  .tut-flow {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .tf-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+  .tf-step {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .tfs-idx {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--c-lime, #c8f14d);
+  }
+  .tf-step strong {
+    font-size: 1rem;
+    color: var(--c-text, #e8ece9);
+  }
+  .tf-step p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .tut-trouble {
+    margin-bottom: 2.5rem;
+  }
+  .tt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  .tt-item {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .tt-item strong {
+    display: block;
+    color: var(--c-lime, #c8f14d);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+  .tt-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-text-muted, #b2b8b3);
+    line-height: 1.6;
+  }
+  .tut-foot-nav {
+    background: var(--c-surface, #151615);
+    border: 1px solid var(--c-border, #242524);
+    border-radius: 14px;
+    padding: 1.75rem;
+  }
+  .tfn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .tfn-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .tfn-card:hover {
+    border-color: var(--c-lime, #c8f14d);
+    transform: translateY(-2px);
+  }
+  .tfn-card strong {
+    color: var(--c-text, #e8ece9);
+    font-size: 1rem;
+  }
+  .tfn-card span {
+    font-size: 0.82rem;
+    color: var(--c-text-muted, #b2b8b3);
+  }
+</style>

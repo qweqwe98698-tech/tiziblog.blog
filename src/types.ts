@@ -98,6 +98,13 @@ export interface SiteConfig {
   about: string;
   /** Legal owner shown in the footer copyright line. */
   copyrightHolder: string;
+  /** Search engine verification tokens for Google, Bing, Shenma, Baidu */
+  verification?: {
+    google?: string;
+    bing?: string;
+    shenma?: string;
+    baidu?: string;
+  };
 }
 
 export interface Client {
