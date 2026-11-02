@@ -602,6 +602,14 @@ const jsonLd = graph([
     border: 1px solid var(--c-border, #242524);
     color: var(--c-text-muted, #b2b8b3);
   }
+  .ul-pill :global(.ic),
+  .ul-pill :global(svg) {
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    max-width: 12px !important;
+    flex-shrink: 0 !important;
+  }
   .ul-pill.ok {
     background: rgba(200, 241, 77, 0.1);
     border-color: rgba(200, 241, 77, 0.3);
@@ -611,6 +619,17 @@ const jsonLd = graph([
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    align-items: center;
+  }
+  .spotlight-actions .btn-outline {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28) !important;
+  }
+  .spotlight-actions .btn-outline:hover {
+    background: rgba(200, 241, 77, 0.16) !important;
+    color: var(--c-lime, #c8f14d) !important;
+    box-shadow: inset 0 0 0 1.5px var(--c-lime, #c8f14d) !important;
   }
 
   /* Spotlight Visual */

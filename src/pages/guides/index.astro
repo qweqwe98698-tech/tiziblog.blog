@@ -181,15 +181,20 @@ const jsonLd = graph([
   .gc-takeaways li {
     display: flex;
     align-items: flex-start;
-    gap: 0.4rem;
-    font-size: 0.8rem;
+    gap: 0.5rem;
+    font-size: 0.85rem;
     color: var(--c-text-muted, #b2b8b3);
-    line-height: 1.5;
+    line-height: 1.6;
   }
-  .gc-takeaways li :global(.ic-xxs) {
+  .gc-takeaways li :global(.ic),
+  .gc-takeaways li :global(svg) {
+    width: 13px !important;
+    height: 13px !important;
+    min-width: 13px !important;
+    max-width: 13px !important;
     color: var(--c-lime, #c8f14d);
-    flex-shrink: 0;
-    margin-top: 0.2rem;
+    flex-shrink: 0 !important;
+    margin-top: 4px;
   }
   .gc-footer {
     margin-top: auto;

@@ -9,12 +9,13 @@ interface Props extends Omit<HTMLAttributes<'svg'>, 'viewBox'> {
   label?: string;
 }
 
-const { name, label, class: className = 'ic', ...rest } = Astro.props;
+const { name, label, class: className, ...rest } = Astro.props;
 const viewBox = name === 'logo' ? '0 0 32 32' : '0 0 24 24';
+const classes = ['ic', className].filter(Boolean).join(' ');
 ---
 
 <svg
-  class={className}
+  class={classes}
   viewBox={viewBox}
   role={label ? 'img' : undefined}
   aria-label={label}
